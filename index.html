@@ -1002,11 +1002,16 @@ async function fetchClanCWL(clanName) {
   const tag = CLAN_TAGS[clanName];
   if (!tag) return null;
   try {
-    const res = await fetch(BASE + '/cwl/' + tag + '/' + CURRENT_SEASON);
-    if (!res.ok) return null;
+    const url = BASE + '/cwl/' + tag + '/' + CURRENT_SEASON;
+    console.log('Fetching:', url);
+    const res = await fetch(url);
+    console.log('Response status:', res.status, 'for', clanName);
+    if (!res.ok) { console.warn('Non-ok response:', res.status); return null; }
     const data = await res.json();
 
+    console.log('clan_rankings:', data.clan_rankings ? data.clan_rankings.map(c=>c.tag) : 'none');
     const me = findClanInRankings(data, tag);
+    console.log('Found clan:', me ? me.name : 'NOT FOUND', 'for tag', tag);
     if (!me) return null;
 
     const result = {
