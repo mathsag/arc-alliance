@@ -974,42 +974,39 @@ const CLAN_TAGS = {
   'HW Esports II': '%23UQPYQ980',
 };
 
-
-// Cache to avoid re-fetching
 const dataCache = {};
+const BASE = 'https://api.clashk.ing';
+const CURRENT_SEASON = '2026-04';
+const PREV_SEASONS = ['2026-03','2026-02','2026-01','2025-12','2025-11'];
+const APRIL_CLANS = new Set(['Robust Norge','Hierarchy of W','Severance','Sunbath CWL','Arctic Sunbath','Arctic Solstice']);
+
+function parseCWL(data) {
+  if (!data) return null;
+  const c = data.clan || data;
+  return {
+    league:      data.league_name || data.league || '—',
+    wins:        c.wins   != null ? c.wins   : '—',
+    losses:      c.losses != null ? c.losses : '—',
+    stars:       c.stars  != null ? c.stars  : '—',
+    destruction: c.destruction != null ? c.destruction.toFixed(1) + '%' : '—',
+    medals:      c.medals != null ? c.medals : (data.medals != null ? data.medals : '—'),
+    rank:        data.rank != null ? '#' + data.rank + ' i gruppen' : '—',
+  };
+}
 
 async function fetchClanCWL(clanName) {
   if (dataCache[clanName]) return dataCache[clanName];
-  
   const tag = CLAN_TAGS[clanName];
   if (!tag) return null;
-
   try {
-    // Fetch current CWL season
-    const [cwlRes, clanRes] = await Promise.all([
-      fetch(`https://api.clashk.ing/clan/${tag}/cwl/season`),
-      fetch(`https://api.clashk.ing/clan/${tag}`)
-    ]);
-
-    const cwl = cwlRes.ok ? await cwlRes.json() : null;
-    const clan = clanRes.ok ? await clanRes.json() : null;
-
-    const result = {
-      name: clan?.name || clanName,
-      league: cwl?.league_name || '—',
-      wins: cwl?.wins ?? '—',
-      losses: cwl?.losses ?? '—',
-      ties: cwl?.ties ?? 0,
-      medals: cwl?.medals ?? '—',
-      rank: cwl?.group_rank ? `#${cwl.group_rank} i gruppen` : '—',
-      stars: cwl?.stars ?? '—',
-      destruction: cwl?.destruction ? `${cwl.destruction.toFixed(1)}%` : '—',
-    };
-
-    dataCache[clanName] = result;
+    const res = await fetch(`${BASE}/cwl/${tag}/${CURRENT_SEASON}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const result = parseCWL(data);
+    if (result) dataCache[clanName] = result;
     return result;
-  } catch (e) {
-    console.warn('API error for', clanName, e);
+  } catch(e) {
+    console.warn('CWL fetch error', clanName, e);
     return null;
   }
 }
@@ -1017,32 +1014,28 @@ async function fetchClanCWL(clanName) {
 async function fetchCWLHistory(clanName) {
   const tag = CLAN_TAGS[clanName];
   if (!tag) return [];
-
-  try {
-    const res = await fetch(`https://api.clashk.ing/clan/${tag}/cwl/history`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    // Expect array of seasons
-    return (data || []).slice(0, 6).map(s => ({
-      month: s.season || s.month || '—',
-      league: s.league_name || '—',
-      record: s.wins !== undefined ? `${s.wins}W - ${s.losses}T` : '—',
-      medals: s.medals ?? '—',
-      rank: s.group_rank ? `#${s.group_rank}` : '—',
-    }));
-  } catch (e) {
-    return [];
-  }
+  const results = [];
+  await Promise.all(PREV_SEASONS.map(async (s) => {
+    try {
+      const res = await fetch(`${BASE}/cwl/${tag}/${s}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const parsed = parseCWL(data);
+      if (parsed) results.push({ season: s, ...parsed });
+    } catch(e) {}
+  }));
+  results.sort((a,b) => b.season.localeCompare(a.season));
+  return results;
 }
 
 async function openModal(clanName) {
-  const modal = document.getElementById('statModal');
-  const nameEl = document.getElementById('modalClanName');
+  const modal   = document.getElementById('statModal');
+  const nameEl  = document.getElementById('modalClanName');
   const statsEl = document.getElementById('modalCurrentStats');
-  const histEl = document.getElementById('modalHistory');
+  const histEl  = document.getElementById('modalHistory');
 
   nameEl.textContent = clanName;
-  statsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--gold);font-family:Cinzel,serif;padding:1rem;">Laster...</div>';
+  statsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--gold);font-family:Cinzel,serif;padding:1.5rem;letter-spacing:2px;">LASTER DATA...</div>';
   histEl.innerHTML = '';
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1053,38 +1046,31 @@ async function openModal(clanName) {
   ]);
 
   if (!live) {
-    statsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(232,224,204,0.4);font-family:Cinzel,serif;padding:1rem;">Kunne ikke hente data</div>';
-    return;
+    statsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(232,224,204,0.4);font-family:Cinzel,serif;padding:1.5rem;letter-spacing:1px;">Ingen CWL-data for ' + CURRENT_SEASON + '</div>';
+  } else {
+    const record = live.wins !== '—' ? `${live.wins}W – ${live.losses}T` : '—';
+    const isActive = APRIL_CLANS.has(clanName);
+    const activeText = isActive
+      ? '<span style="color:#66DD66;font-size:0.8rem;">✓ Spilte i april 2026</span>'
+      : '<span style="color:rgba(200,200,200,0.4);font-size:0.8rem;">– Deltok ikke denne måneden</span>';
+
+    statsEl.innerHTML =
+      '<div class="modal-stat-box"><div class="modal-stat-label">Liga</div><div class="modal-stat-val">' + live.league + '</div></div>' +
+      '<div class="modal-stat-box"><div class="modal-stat-label">Rekord</div><div class="modal-stat-val">' + record + '</div></div>' +
+      '<div class="modal-stat-box"><div class="modal-stat-label">Medaljer</div><div class="modal-stat-val">🏅 ' + live.medals + '</div></div>' +
+      '<div class="modal-stat-box"><div class="modal-stat-label">Plassering</div><div class="modal-stat-val">' + live.rank + '</div></div>' +
+      '<div class="modal-stat-box"><div class="modal-stat-label">Stjerner</div><div class="modal-stat-val">⭐ ' + live.stars + '</div></div>' +
+      '<div class="modal-stat-box"><div class="modal-stat-label">Destruction</div><div class="modal-stat-val">' + live.destruction + '</div></div>' +
+      '<div class="modal-stat-box" style="grid-column:1/-1"><div class="modal-stat-label">Status april</div><div style="margin-top:0.3rem">' + activeText + '</div></div>';
   }
 
-  const record = live.wins !== '—' ? `${live.wins}W - ${live.losses}T` : '—';
-  const aprilClans = new Set(['Robust Norge','Hierarchy of W','Severance','Sunbath CWL','Arctic Sunbath','Arctic Solstice']);
-  const isActive = aprilClans.has(clanName);
-  const activeText = isActive
-    ? '<span style="color:#66DD66;font-size:0.75rem;">✓ Spilte i april</span>'
-    : '<span style="color:rgba(200,200,200,0.4);font-size:0.75rem;">– Deltok ikke denne måneden</span>';
-
-  statsEl.innerHTML = `
-    <div class="modal-stat-box"><div class="modal-stat-label">Liga</div><div class="modal-stat-val">${live.league}</div></div>
-    <div class="modal-stat-box"><div class="modal-stat-label">Rekord</div><div class="modal-stat-val">${record}</div></div>
-    <div class="modal-stat-box"><div class="modal-stat-label">Medaljer</div><div class="modal-stat-val">🏅 ${live.medals}</div></div>
-    <div class="modal-stat-box"><div class="modal-stat-label">Plassering</div><div class="modal-stat-val">${live.rank}</div></div>
-    <div class="modal-stat-box"><div class="modal-stat-label">Stjerner</div><div class="modal-stat-val">⭐ ${live.stars}</div></div>
-    <div class="modal-stat-box"><div class="modal-stat-label">Destruction</div><div class="modal-stat-val">${live.destruction}</div></div>
-    <div class="modal-stat-box" style="grid-column:1/-1"><div class="modal-stat-label">Status april</div><div style="margin-top:0.3rem">${activeText}</div></div>
-  `;
-
   if (history.length > 0) {
-    histEl.innerHTML = history.map(h => `
-      <tr>
-        <td>${h.month}</td>
-        <td style="color:var(--gold)">${h.league}</td>
-        <td>${h.record}</td>
-        <td>🏅 ${h.medals}</td>
-        <td>${h.rank}</td>
-      </tr>`).join('');
+    histEl.innerHTML = history.map(function(h) {
+      var rec = h.wins !== '—' ? h.wins + 'W – ' + h.losses + 'T' : '—';
+      return '<tr><td>' + h.season + '</td><td style="color:var(--gold)">' + h.league + '</td><td>' + rec + '</td><td>🏅 ' + h.medals + '</td><td>' + h.rank + '</td></tr>';
+    }).join('');
   } else {
-    histEl.innerHTML = '<tr><td colspan="5" style="color:rgba(232,224,204,0.4);text-align:center;">Ingen historikk tilgjengelig</td></tr>';
+    histEl.innerHTML = '<tr><td colspan="5" style="color:rgba(232,224,204,0.4);text-align:center;padding:1rem;">Ingen historikk tilgjengelig</td></tr>';
   }
 }
 
@@ -1097,8 +1083,9 @@ function closeModalOutside(e) {
   if (e.target === document.getElementById('statModal')) closeModal();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 </script>
+
 
 
 </body>
