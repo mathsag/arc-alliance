@@ -1459,22 +1459,20 @@ var legendLoaded = {};
 var ARCLINE_CLANS_FOR_LEGEND = ['ACM','HW Esports','Hierarchy of W','Arcline','PAAK ARMY','HOLLOW','HW Alliance','Severance','HW Community','Arcline Mini'];
 var SUNBATH_CLANS_FOR_LEGEND = ['Arctic Sunbath','Arctic CWL','Sunbath CWL','Arctic Solstice','Solstice CWL'];
 
-async function fetchLegendForClan(clanName) {
-  var tag = CLAN_TAGS[clanName];
-  if (!tag) return null;
+// Official CoC API via allclash.com proxy (no key needed, CORS ok)
+async function fetchClanFromCoC(tag) {
   try {
-    var res = await fetch(BASE + '/legend/' + tag);
+    var cleanTag = decodeURIComponent(tag).replace('#','%23');
+    var res = await fetch('https://proxy.clashk.ing/v1/clans/' + cleanTag, {headers:{'Accept':'application/json'}});
     if (!res.ok) return null;
     return await res.json();
   } catch(e) { return null; }
 }
 
-async function fetchClanMembersLegend(clanName) {
-  // ClashKing /clan/{tag}/members gives current member list with legend stats
-  var tag = CLAN_TAGS[clanName];
-  if (!tag) return null;
+async function fetchPlayerFromCoC(tag) {
   try {
-    var res = await fetch(BASE + '/clan/' + tag + '/members');
+    var cleanTag = tag.replace('#','%23');
+    var res = await fetch('https://proxy.clashk.ing/v1/players/' + cleanTag, {headers:{'Accept':'application/json'}});
     if (!res.ok) return null;
     return await res.json();
   } catch(e) { return null; }
@@ -1484,86 +1482,98 @@ async function loadLegendData(alliance) {
   var containerId = alliance + '-legend-content';
   var container = document.getElementById(containerId);
   if (!container) return;
-  if (legendLoaded[alliance]) return; // already loaded
+  if (legendLoaded[alliance]) return;
 
-  container.innerHTML = '<div class="legend-loading">HENTER LEGEND-DATA FRA API...</div>';
+  container.innerHTML = '<div class="legend-loading">HENTER LEGEND-DATA...</div>';
 
   var clans = alliance === 'arcline' ? ARCLINE_CLANS_FOR_LEGEND : SUNBATH_CLANS_FOR_LEGEND;
-  var TODAY = new Date().toISOString().split('T')[0].replace(/-/g,'');
 
-  // Try to fetch legend stats per clan via /legend/{tag}
-  var allPlayers = [];
-  var fetches = clans.map(async function(clanName) {
+  // Fetch clan members from CWL data we already have cached
+  // and build legend list from TH17/18 players seen in CWL rounds
+  var legendPlayers = [];
+  var seenTags = new Set();
+
+  // Gather TH17/18 players from cached CWL data
+  for (var i = 0; i < clans.length; i++) {
+    var clanName = clans[i];
     var tag = CLAN_TAGS[clanName];
-    if (!tag) return;
-    try {
-      var res = await fetch(BASE + '/legend/' + tag);
-      if (!res.ok) return;
-      var data = await res.json();
-      // data could be array of players or object
-      var players = Array.isArray(data) ? data : (data.players || data.items || []);
-      players.forEach(function(p) {
-        p._clanName = clanName;
-        allPlayers.push(p);
-      });
-    } catch(e) {}
-  });
-  await Promise.all(fetches);
+    if (!tag) continue;
+    var cacheKey = 'raw_' + clanName + '_' + CURRENT_SEASON;
+    var rawData = dataCache[cacheKey];
+    if (!rawData) {
+      rawData = await fetchRawCWL(clanName, CURRENT_SEASON);
+    }
+    if (!rawData || !rawData.clans) continue;
 
-  if (allPlayers.length === 0) {
-    // Fallback: try /player/{tag}/legend for a few known players, or show placeholder
-    container.innerHTML = buildLegendPlaceholder(alliance, clans);
+    // Find our clan in the clans array
+    var cleanTag = decodeURIComponent(tag).replace('#','');
+    var clanEntry = rawData.clans.find(function(c){ return c.tag && c.tag.replace('#','') === cleanTag; });
+    if (!clanEntry || !clanEntry.members) continue;
+
+    clanEntry.members.forEach(function(m) {
+      if (!seenTags.has(m.tag)) {
+        seenTags.add(m.tag);
+        legendPlayers.push({
+          name: m.name,
+          tag: m.tag,
+          th: m.townHallLevel || m.townhallLevel || '?',
+          clan: clanName
+        });
+      }
+    });
+  }
+
+  // Filter to TH17+ as legend candidates
+  var th17plus = legendPlayers.filter(function(p){ return parseInt(p.th) >= 17; });
+  th17plus.sort(function(a,b){ return parseInt(b.th) - parseInt(a.th); });
+
+  if (th17plus.length === 0) {
+    container.innerHTML = buildLegendInfo(alliance, clans);
     legendLoaded[alliance] = true;
     return;
   }
 
-  // Sort by trophies
-  allPlayers.sort(function(a,b) {
-    var tA = a.trophies || a.current_trophies || 0;
-    var tB = b.trophies || b.current_trophies || 0;
-    return tB - tA;
-  });
+  // Build player grid
+  var html = '<div style="margin-bottom:1rem;">';
+  html += '<div class="legend-section-title" style="margin-bottom:0.6rem;">⚔️ TH17/18 SPILLERE · POTENSIELLE LEGEND</div>';
+  html += '<p style="font-family:Cinzel,serif;font-size:0.68rem;color:rgba(232,224,204,0.4);margin-bottom:1rem;letter-spacing:1px;">Basert på CWL-deltakere fra april 2026. Live trofé-data krever offisiell CoC API.</p>';
+  html += '</div>';
 
-  var html = '<div class="legend-container">';
-  html += '<div class="legend-section-header">🏆 LEGEND-SPILLERE · ' + allPlayers.length + ' AKTIVE</div>';
-  allPlayers.forEach(function(p, idx) {
-    var trophies = p.trophies || p.current_trophies || '—';
-    var atkStars = p.attacks || p.attack_wins || '—';
-    var defStars = p.defenses || p.defense_wins || '—';
-    var atkDmg = p.attack_damage || '';
-    var defDmg = p.defense_damage || '';
-    var name = p.name || p.player_name || '?';
-    var medal = idx < 3 ? ['🥇','🥈','🥉'][idx] : (idx+1)+'.';
+  html += '<div class="legend-container">';
+  th17plus.forEach(function(p, idx) {
+    var medal = idx < 3 ? ['🥇','🥈','🥉'][idx] : '';
+    var cocLink = 'https://www.clashofstats.com/players/' + p.tag.replace('#','');
     html += '<div class="legend-player-card">' +
-      '<div class="legend-rank">' + medal + '</div>' +
-      '<div class="legend-trophy">🏆</div>' +
-      '<div class="legend-name" title="' + name + '">' + name + '</div>' +
+      '<div class="legend-rank">' + (medal || (idx+1)+'.') + '</div>' +
+      '<span class="th-badge" style="min-width:2rem;text-align:center;">'+p.th+'</span>' +
+      '<div class="legend-name"><a href="'+cocLink+'" target="_blank" style="color:var(--text-light);text-decoration:none;" title="Se på ClashOfStats">'+p.name+'</a></div>' +
       '<div class="legend-stats">' +
-      '<span class="legend-badge badge-trophies">🏆 ' + trophies + '</span>' +
-      (atkStars !== '—' ? '<span class="legend-badge badge-atk">⚔ ' + atkStars + (atkDmg?(' / '+atkDmg):'') + '</span>' : '') +
-      (defStars !== '—' ? '<span class="legend-badge badge-def">🛡 ' + defStars + (defDmg?(' / '+defDmg):'') + '</span>' : '') +
-      '<span style="font-family:Cinzel,serif;font-size:0.65rem;color:rgba(232,224,204,0.4);">' + (p._clanName||'') + '</span>' +
+      '<span class="legend-badge badge-trophies">🏆 TH'+p.th+'</span>' +
+      '<span style="font-family:Cinzel,serif;font-size:0.65rem;color:rgba(232,224,204,0.35);">'+p.clan+'</span>' +
       '</div></div>';
   });
   html += '</div>';
-  html += '<p style="font-size:0.7rem;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;letter-spacing:1px;margin-top:0.5rem;text-align:center;">Data fra ClashKing API · Oppdateres daglig</p>';
+
+  html += '<div style="margin-top:1.2rem;padding:0.8rem;background:rgba(255,215,0,0.04);border:1px dashed rgba(255,215,0,0.15);border-radius:2px;">';
+  html += '<p style="font-family:Cinzel,serif;font-size:0.68rem;color:rgba(255,215,0,0.5);letter-spacing:1px;margin-bottom:0.5rem;">🔗 LIVE LEGEND-STATS</p>';
+  html += '<p style="font-family:Cinzel,serif;font-size:0.65rem;color:rgba(232,224,204,0.4);line-height:1.6;">For live trofé, angrep og forsvar i Legendeliga, besøk:</p>';
+  html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;">';
+  html += '<a href="https://www.clashofstats.com" target="_blank" style="padding:4px 10px;border:1px solid rgba(255,215,0,0.25);border-radius:2px;font-family:Cinzel,serif;font-size:0.65rem;color:var(--gold);text-decoration:none;">ClashOfStats</a>';
+  html += '<a href="https://clashk.ing" target="_blank" style="padding:4px 10px;border:1px solid rgba(255,215,0,0.25);border-radius:2px;font-family:Cinzel,serif;font-size:0.65rem;color:var(--gold);text-decoration:none;">ClashKing</a>';
+  html += '<a href="https://www.clashperk.com" target="_blank" style="padding:4px 10px;border:1px solid rgba(255,215,0,0.25);border-radius:2px;font-family:Cinzel,serif;font-size:0.65rem;color:var(--gold);text-decoration:none;">ClashPerk</a>';
+  html += '</div></div>';
 
   container.innerHTML = html;
   legendLoaded[alliance] = true;
 }
 
-function buildLegendPlaceholder(alliance, clans) {
+function buildLegendInfo(alliance, clans) {
   var html = '<div class="legend-container">';
-  html += '<div class="legend-section-header">ℹ️ LEGEND-DATA</div>';
+  html += '<div class="legend-section-header">ℹ️ LEGEND-DATA IKKE TILGJENGELIG</div>';
   html += '<div style="padding:1.5rem;text-align:center;">';
-  html += '<p style="font-family:Cinzel,serif;font-size:0.8rem;color:rgba(232,224,204,0.6);margin-bottom:1rem;">Legend-endepunktet er under utvikling.</p>';
-  html += '<p style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);margin-bottom:1.5rem;">Klaner i ' + (alliance==='arcline'?'Arcline':'Arctic Sunbath') + ' som sjekkes:</p>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;">';
-  clans.forEach(function(c) {
-    html += '<span class="th-badge" style="font-size:0.75rem;">' + c + '</span>';
-  });
-  html += '</div>';
-  html += '<p style="font-family:Cinzel,serif;font-size:0.68rem;color:rgba(232,224,204,0.3);margin-top:1.5rem;">Prøv å åpne enkeltklaner i statistikk-modalen for spillerdata.</p>';
+  html += '<p style="font-family:Cinzel,serif;font-size:0.75rem;color:rgba(232,224,204,0.6);margin-bottom:1rem;">Åpne Stats-tabben og klikk på en klan for full CWL-spillerstatistikk.</p>';
+  html += '<p style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);margin-bottom:0.8rem;">For live Legend League-trofeer:</p>';
+  html += '<a href="https://www.clashofstats.com" target="_blank" style="padding:6px 16px;border:1px solid rgba(255,215,0,0.3);border-radius:2px;font-family:Cinzel,serif;font-size:0.75rem;color:var(--gold);text-decoration:none;display:inline-block;">ClashOfStats.com</a>';
   html += '</div></div>';
   return html;
 }
