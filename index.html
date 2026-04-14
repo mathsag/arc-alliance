@@ -1474,55 +1474,60 @@ async function loadAlliancePlayers(alliance) {
   if (!container) return;
   if (playerHistoryLoaded[alliance]) return;
 
-  container.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER SPILLERHISTORIKK...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER SPILLERHISTORIKK FOR ALLE SESONGER...</div>';
 
-  var clans = alliance === 'arcline' ? ARCLINE_CLANS : SUNBATH_CLANS;
-  var players = {}; // tag -> {name, th, clan, seasons:{season: {attacks, stars, pct3star}}}
+  var allClansForAlliance = alliance === 'arcline' ? ARCLINE_CLANS : SUNBATH_CLANS;
+  var players = {}; // tag -> {name, th, clan, totalAtk, totalStars, total3, totalPct, seasons:{}}
 
-  // Fetch current season only (for speed), show all players
-  var season = CURRENT_SEASON;
-  for (var i = 0; i < clans.length; i++) {
-    var clanName = clans[i];
-    var cacheKey = 'raw_' + clanName + '_' + season;
-    var rawData = dataCache[cacheKey];
-    if (!rawData) rawData = await fetchRawCWL(clanName, season);
-    if (!rawData || !rawData.rounds) continue;
+  // Fetch ALL seasons for ALL clans in this alliance — ignore 404s silently
+  for (var si = 0; si < ALL_SEASONS.length; si++) {
+    var season = ALL_SEASONS[si];
+    for (var ci = 0; ci < allClansForAlliance.length; ci++) {
+      var clanName = allClansForAlliance[ci];
+      var cacheKey = 'raw_' + clanName + '_' + season;
+      var rawData = dataCache[cacheKey];
+      if (!rawData) {
+        try { rawData = await fetchRawCWL(clanName, season); } catch(e) {}
+      }
+      if (!rawData || !rawData.rounds) continue;
 
-    var cleanTag = decodeURIComponent(CLAN_TAGS[clanName]||'').replace('#','');
+      var cleanTag = decodeURIComponent(CLAN_TAGS[clanName]||'').replace('#','');
 
-    rawData.rounds.forEach(function(round) {
-      if (!round.wars) return;
-      round.wars.forEach(function(war) {
-        var ourSide = null;
-        if (war.clan && war.clan.tag && war.clan.tag.replace('#','') === cleanTag) ourSide = war.clan;
-        else if (war.opponent && war.opponent.tag && war.opponent.tag.replace('#','') === cleanTag) ourSide = war.opponent;
-        if (!ourSide || !ourSide.members) return;
+      rawData.rounds.forEach(function(round) {
+        if (!round.wars) return;
+        round.wars.forEach(function(war) {
+          var ourSide = null;
+          if (war.clan && war.clan.tag && war.clan.tag.replace('#','') === cleanTag) ourSide = war.clan;
+          else if (war.opponent && war.opponent.tag && war.opponent.tag.replace('#','') === cleanTag) ourSide = war.opponent;
+          if (!ourSide || !ourSide.members) return;
 
-        ourSide.members.forEach(function(m) {
-          if (!players[m.tag]) {
-            players[m.tag] = {
-              name: m.name,
-              th: m.townhallLevel || m.townHallLevel || '?',
-              clan: clanName,
-              totalAtk: 0, totalStars: 0, total3: 0, totalPct: 0, seasons: {}
-            };
-          }
-          if (!players[m.tag].seasons[season]) {
-            players[m.tag].seasons[season] = {atk:0, stars:0, three:0, pct:0};
-          }
-          (m.attacks||[]).forEach(function(a) {
-            players[m.tag].totalAtk++;
-            players[m.tag].totalStars += a.stars;
-            players[m.tag].totalPct += a.destructionPercentage;
-            if (a.stars === 3) players[m.tag].total3++;
-            players[m.tag].seasons[season].atk++;
-            players[m.tag].seasons[season].stars += a.stars;
-            players[m.tag].seasons[season].pct += a.destructionPercentage;
-            if (a.stars === 3) players[m.tag].seasons[season].three++;
+          ourSide.members.forEach(function(m) {
+            if (!m.tag) return;
+            if (!players[m.tag]) {
+              players[m.tag] = {
+                name: m.name || '?',
+                th: m.townhallLevel || m.townHallLevel || '?',
+                clan: clanName,
+                totalAtk: 0, totalStars: 0, total3: 0, totalPct: 0, seasons: {}
+              };
+            }
+            if (!players[m.tag].seasons[season]) {
+              players[m.tag].seasons[season] = {atk:0, stars:0, three:0, pct:0};
+            }
+            (m.attacks||[]).forEach(function(a) {
+              players[m.tag].totalAtk++;
+              players[m.tag].totalStars += (a.stars||0);
+              players[m.tag].totalPct += (a.destructionPercentage||0);
+              if (a.stars === 3) players[m.tag].total3++;
+              players[m.tag].seasons[season].atk++;
+              players[m.tag].seasons[season].stars += (a.stars||0);
+              players[m.tag].seasons[season].pct += (a.destructionPercentage||0);
+              if (a.stars === 3) players[m.tag].seasons[season].three++;
+            });
           });
         });
       });
-    });
+    }
   }
 
   var sorted = Object.keys(players).map(function(tag) {
@@ -1538,34 +1543,37 @@ async function loadAlliancePlayers(alliance) {
     return;
   }
 
+  var seasonCount = ALL_SEASONS.length;
   var html = '<div style="margin-bottom:0.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">';
-  html += '<input id="'+alliance+'-player-search" type="text" placeholder="Søk etter spiller..." oninput="filterPlayers(\''+alliance+'\')" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
-  html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere</span>';
+  html += '<input id="'+alliance+'-player-search" type="text" placeholder="Søk etter spiller..." oninput="filterPlayers(''+alliance+'')" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
+  html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere · siste '+seasonCount+' sesonger</span>';
   html += '</div>';
 
   html += '<table class="player-table" id="'+alliance+'-player-table"><thead><tr>' +
-    '<th>#</th><th>Spiller</th><th>TH</th><th>Klan</th><th>Angrep</th><th>⭐ Total</th><th>3★</th><th>Snitt %</th>' +
+    '<th>#</th><th>Spiller</th><th>TH</th><th>Klan</th><th>Angrep</th><th>⭐ Total</th><th>3★</th><th>Snitt %</th><th>Sesonger</th>' +
     '</tr></thead><tbody>';
 
   sorted.forEach(function(p, idx) {
     var avgPct = p.totalAtk > 0 ? (p.totalPct / p.totalAtk).toFixed(0) : '—';
-    var pct3 = p.totalAtk > 0 ? ((p.total3/p.totalAtk)*100).toFixed(0) : '0';
-    html += '<tr class="player-history-row" data-name="'+p.name.toLowerCase()+'" onclick="openPlayerModal(\''+p.tag.replace(/'/g,"\\'")+'\',' +
-      '\''+p.name.replace(/'/g,"\\'")+'\',' +
-      '\''+p.clan+'\');" style="cursor:pointer;">' +
+    var seasonsPlayed = Object.keys(p.seasons).length;
+    var safeTag = p.tag ? p.tag.replace(/['"\\]/g,'') : '';
+    var safeName = p.name ? p.name.replace(/['"\\]/g,'') : '?';
+    var safeClan = p.clan ? p.clan.replace(/['"\\]/g,'') : '';
+    html += '<tr class="player-history-row" data-name="'+(p.name||'').toLowerCase()+'" onclick="openPlayerModal(''+safeTag+'',''+safeName+'',''+safeClan+'');" style="cursor:pointer;">' +
       '<td style="color:rgba(232,224,204,0.4);font-size:0.75rem;">'+(idx+1)+'</td>' +
-      '<td style="font-weight:500;color:var(--gold);">'+p.name+'</td>' +
+      '<td style="font-weight:500;color:var(--gold);">'+(p.name||'?')+'</td>' +
       '<td><span class="th-badge">'+p.th+'</span></td>' +
       '<td style="font-size:0.72rem;color:rgba(232,224,204,0.5);">'+p.clan+'</td>' +
       '<td style="font-family:Cinzel,serif;">'+p.totalAtk+'</td>' +
       '<td style="color:var(--gold);font-family:Cinzel,serif;">⭐ '+p.totalStars+'</td>' +
       '<td style="color:#66DD66;font-family:Cinzel,serif;">'+p.total3+'x</td>' +
       '<td style="color:var(--gold);">'+avgPct+'%</td>' +
+      '<td style="font-family:Cinzel,serif;font-size:0.72rem;color:rgba(232,224,204,0.5);">'+seasonsPlayed+'/'+seasonCount+'</td>' +
       '</tr>';
   });
 
   html += '</tbody></table>';
-  html += '<p style="font-size:0.68rem;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;letter-spacing:1px;margin-top:0.5rem;">Klikk på en spiller for detaljert historikk · Data fra '+season+'</p>';
+  html += '<p style="font-size:0.68rem;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;letter-spacing:1px;margin-top:0.5rem;">Klikk på en spiller for detaljert sesonghistorikk</p>';
 
   container.innerHTML = html;
   playerHistoryLoaded[alliance] = true;
