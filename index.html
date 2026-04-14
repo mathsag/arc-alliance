@@ -1544,8 +1544,8 @@ async function loadAlliancePlayers(alliance) {
   }
 
   var seasonCount = ALL_SEASONS.length;
-  var html = '<div style="margin-bottom:0.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">';
-  html += '<input id="'+alliance+'-player-search" type="text" placeholder="Søk etter spiller..." oninput="filterPlayers(''+alliance+'')" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
+  var html = '<div data-alliance="'+alliance+'" style="margin-bottom:0.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">';
+  html += '<input id="'+alliance+'-player-search" type="text" placeholder="S&oslash;k etter spiller..." oninput="filterPlayersFromInput(this)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
   html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere · siste '+seasonCount+' sesonger</span>';
   html += '</div>';
 
@@ -1559,7 +1559,7 @@ async function loadAlliancePlayers(alliance) {
     var safeTag = p.tag ? p.tag.replace(/['"\\]/g,'') : '';
     var safeName = p.name ? p.name.replace(/['"\\]/g,'') : '?';
     var safeClan = p.clan ? p.clan.replace(/['"\\]/g,'') : '';
-    html += '<tr class="player-history-row" data-name="'+(p.name||'').toLowerCase()+'" onclick="openPlayerModal(''+safeTag+'',''+safeName+'',''+safeClan+'');" style="cursor:pointer;">' +
+    html += '<tr class="player-history-row" data-name="'+(p.name||'').toLowerCase()+'" data-tag="'+safeTag+'" data-pname="'+safeName+'" data-clan="'+safeClan+'" onclick="openPlayerModal(this.dataset.tag,this.dataset.pname,this.dataset.clan)" style="cursor:pointer;">' +
       '<td style="color:rgba(232,224,204,0.4);font-size:0.75rem;">'+(idx+1)+'</td>' +
       '<td style="font-weight:500;color:var(--gold);">'+(p.name||'?')+'</td>' +
       '<td><span class="th-badge">'+p.th+'</span></td>' +
@@ -1577,6 +1577,11 @@ async function loadAlliancePlayers(alliance) {
 
   container.innerHTML = html;
   playerHistoryLoaded[alliance] = true;
+}
+
+function filterPlayersFromInput(el) {
+  var alliance = el.id.replace('-player-search', '');
+  filterPlayers(alliance);
 }
 
 function filterPlayers(alliance) {
