@@ -1129,13 +1129,14 @@ async function fetchRawCWL(clanName, season) {
   if (!tag) return null;
   var cacheKey = 'raw_' + clanName + '_' + s;
   if (dataCache[cacheKey]) return dataCache[cacheKey];
+  if (knownMissing[cacheKey]) return null;
   try {
     var res = await fetch(BASE + '/cwl/' + tag + '/' + s);
-    if (!res.ok) return null;
+    if (!res.ok) { knownMissing[cacheKey] = true; return null; }
     var d = await res.json();
-    dataCache[cacheKey] = d;
+    if (d) dataCache[cacheKey] = d;
     return d;
-  } catch(e) { return null; }
+  } catch(e) { knownMissing[cacheKey] = true; return null; }
 }
 
 async function fetchClanCWL(clanName, season) {
@@ -1281,11 +1282,12 @@ function buildPlayerTable(rawData, clanTag) {
 
     var pctBar = p.attacks.length > 0 ? '<div class="pct-bar"><div class="pct-fill" style="width:'+Math.min(avgPct,100)+'%"></div></div>' : '';
 
+    var safeModalTag = (p.tag||'').replace(/['"]/g,'');
+    var safeModalName = (p.name||'').replace(/['"]/g,'');
+    var safeModalClan = (_currentModalClan||'').replace(/['"]/g,'');
     playerHtml += '<tr>' +
       '<td style="color:rgba(232,224,204,0.4);font-size:0.75rem;">'+(idx+1)+'</td>' +
-      '<td style="font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+p.name+'"><span class="player-link" onclick="openPlayerModal(\''+p.tag.replace(/'/g,"\\'")+'\',' +
-      '\''+p.name.replace(/'/g,"\\'")+'\',' +
-      '\''+(_currentModalClan||'')+'\')" style="cursor:pointer;color:var(--gold);text-decoration:underline dotted;">'+p.name+'</span></td>' +
+      '<td style="font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+p.name+'"><span class="player-link" data-tag="'+safeModalTag+'" data-pname="'+safeModalName+'" data-clan="'+safeModalClan+'" onclick="openPlayerModal(this.dataset.tag,this.dataset.pname,this.dataset.clan)" style="cursor:pointer;color:var(--gold);text-decoration:underline dotted;">'+p.name+'</span></td>' +
       '<td><span class="th-badge">'+p.th+'</span></td>' +
       '<td style="max-width:140px;">'+attackStr+'</td>' +
       '<td style="color:var(--gold);font-family:Cinzel,serif;">⭐ '+totalStars+'</td>' +
@@ -1595,6 +1597,7 @@ function filterPlayers(alliance) {
 // ── PLAYER PROFILE MODAL ─────────────────────────────────────────────────────
 
 var playerModalLoaded = {};
+var knownMissing = {}; // cache of clan+season combos that 404
 
 async function openPlayerModal(tag, name, clanName) {
   var modal = document.getElementById('playerModal');
