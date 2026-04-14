@@ -1488,5 +1488,217 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 
 
 
+<!DOCTYPE html>
+<!-- ══════════════════════════════════════════════════════════════
+     ARC ALLIANCE — PATCH FILE
+     Legg innholdet av denne filen inn i arc-alliance.html
+     rett FØR </body> taggen.
+     ══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ════════════════════════════════════
+   MOBILE FIXES
+   ════════════════════════════════════ */
+
+/* Hero: ingen vertikal scrolling/flex-endring på mobil */
+@media (max-width: 768px) {
+  .hero-half,
+  .hero:hover .hero-half,
+  .hero .hero-half:hover {
+    flex: none !important;
+    min-height: 50svh !important;
+    transition: none !important;
+  }
+
+  /* Skjul scroll hint */
+  .scroll-hint { display: none !important; }
+
+  /* Arrangementer-tabell: ingen horisontal scroll */
+  .events-table-wrapper { overflow-x: hidden !important; }
+  .events-table {
+    min-width: 0 !important;
+    width: 100% !important;
+    table-layout: fixed;
+    font-size: 0.7rem !important;
+  }
+  .events-table th,
+  .events-table td { padding: 0.45rem 0.3rem !important; word-break: break-word; }
+  /* Skjul Dato-kolonne på smal skjerm — Navn+Type+Status er nok */
+  .events-table th:nth-child(3),
+  .events-table td:nth-child(3) { display: none; }
+
+  /* Modal: pass på at den ikke er bredere enn skjermen */
+  .modal-overlay {
+    padding: 0.5rem !important;
+    align-items: flex-start !important;
+    padding-top: 3.5rem !important;
+    overflow-y: auto;
+  }
+  .modal {
+    clip-path: none !important;
+    border-radius: 4px !important;
+    max-width: calc(100vw - 1rem) !important;
+    width: 100% !important;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-header { padding: 1rem 1rem 0.8rem !important; }
+  .modal-body   { padding: 1rem !important; }
+  .modal-current-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+  .modal-stat-box { padding: 0.7rem !important; }
+  .modal-stat-val { font-size: 0.95rem !important; }
+
+  /* Modal season-picker row: stack vertikalt */
+  .modal-body > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Modal tabs: horisontal scroll */
+  .modal-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .modal-tabs::-webkit-scrollbar { display: none; }
+  .modal-tab {
+    white-space: nowrap !important;
+    font-size: 0.57rem !important;
+    padding: 0.32rem 0.5rem !important;
+    flex-shrink: 0;
+  }
+
+  /* April badge + CWL badge: mer plass */
+  .april-badge { right: 10px !important; letter-spacing: 0.5px; }
+  .stat-card-header { flex-wrap: wrap; gap: 0.4rem; }
+  .stat-card-badge { margin-top: 0.1rem; }
+
+  /* Spillertabell i modal */
+  #tab-players, #tab-wars, #tab-mvp {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .player-table { font-size: 0.68rem; }
+  .player-table th:nth-child(7),
+  .player-table td:nth-child(7) { display: none; }
+}
+
+@media (max-width: 480px) {
+  /* Enda en kolonne bort på veldig smale skjermer */
+  .events-table th:nth-child(4),
+  .events-table td:nth-child(4) { display: none; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  /* 1. "Se Standings" → "Kommer snart" */
+  document.querySelectorAll('a.btn-clan').forEach(function(el) {
+    if (el.textContent.trim() === 'Se Standings') {
+      el.textContent = 'Kommer snart';
+      el.removeAttribute('href');
+      el.style.opacity = '0.55';
+      el.style.cursor = 'default';
+      el.style.pointerEvents = 'none';
+    }
+  });
+
+  /* 2. Nyheter-datoer */
+  var dateMap = {
+    '13. April 2025': '13. April 2026',
+    '10. April 2025': '9. April 2026',
+    '8. April 2025':  '5. April 2026'
+  };
+  document.querySelectorAll('.news-date').forEach(function(el) {
+    var txt = el.textContent.trim();
+    if (dateMap[txt]) el.textContent = dateMap[txt];
+  });
+
+  /* 3. Alliance Championship → Alliance Cup */
+  document.querySelectorAll('.news-title').forEach(function(el) {
+    if (el.textContent.includes('Alliance Championship')) {
+      el.textContent = 'Alliance Cup — Kommer snart';
+    }
+  });
+  document.querySelectorAll('.news-body').forEach(function(el) {
+    if (el.textContent.includes('interne turneringsformatet er tilbake')) {
+      el.innerHTML = 'Alliance Cup er vår interne alliansecup der alle klaner konkurrerer om alliansens trone. Format og bracket annonseres snart — følg med på Discord.';
+    }
+  });
+
+  /* 4. Events-tabeller: Alliance Championship → Alliance Cup */
+  document.querySelectorAll('.events-table tbody tr').forEach(function(row) {
+    var cells = row.querySelectorAll('td');
+    if (cells[0] && cells[0].textContent.includes('Alliance Championship')) {
+      cells[0].textContent = 'Alliance Cup';
+      if (cells[3]) {
+        cells[3].textContent = 'Kommer snart';
+        cells[3].style.color = 'rgba(232,224,204,0.45)';
+      }
+    }
+  });
+
+  /* 5. Sesong-velger: legg til hint */
+  var picker = document.getElementById('seasonPicker');
+  if (picker) {
+    var pickerWrap = picker.parentElement;
+    var hint = document.createElement('div');
+    hint.style.cssText = [
+      'font-family:Cinzel,serif',
+      'font-size:0.58rem',
+      'letter-spacing:1px',
+      'color:rgba(255,215,0,0.4)',
+      'margin-top:0.35rem',
+      'text-align:center'
+    ].join(';');
+    hint.textContent = 'Velg måned for historikk';
+    pickerWrap.appendChild(hint);
+  }
+
+  /* 6. KOTH-banner: oppdater tekst med Discord-lenke */
+  var kothDesc = document.querySelector('.koth-desc');
+  if (kothDesc && kothDesc.textContent.includes('Begge allianser')) {
+    kothDesc.innerHTML = 'Begge allianser kjemper om én trone. Kun én kan kalle seg mester av Arc Alliance. Detaljer og standings på '
+      + '<a href="https://discord.gg/arc-alliance" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none;">'
+      + 'discord.gg/arc-alliance</a>.';
+  }
+
+  /* 7. Discord-kort i nyheter */
+  var newsGrid = document.querySelector('.news-grid');
+  if (newsGrid && !document.getElementById('discord-news-card')) {
+    var card = document.createElement('div');
+    card.id = 'discord-news-card';
+    card.className = 'news-card';
+    card.style.cssText = [
+      'background:linear-gradient(135deg,rgba(88,101,242,0.1),rgba(88,101,242,0.04))',
+      'border-color:rgba(88,101,242,0.35)'
+    ].join(';');
+    card.innerHTML = [
+      '<div class="news-tag" style="color:#7289DA;">💬 Community</div>',
+      '<div class="news-title">Bli med på Discord</div>',
+      '<div class="news-body">All koordinering av CWL, KOTH, turneringer og alliance-nyheter skjer på vår Discord-server. Taktikk-kanaler, rekruttering og live resultater.</div>',
+      '<div class="news-date" style="margin-top:1rem;">',
+      '<a href="https://discord.gg/arc-alliance" target="_blank"',
+      ' style="display:inline-block;font-family:Cinzel,serif;font-size:0.7rem;',
+      'letter-spacing:2px;color:#7289DA;border:1px solid rgba(88,101,242,0.4);',
+      'padding:0.4rem 1.1rem;text-decoration:none;border-radius:2px;"',
+      ' onmouseover="this.style.background=\'rgba(88,101,242,0.15)\'"',
+      ' onmouseout="this.style.background=\'none\'">',
+      'discord.gg/arc-alliance →',
+      '</a>',
+      '</div>'
+    ].join('');
+    newsGrid.appendChild(card);
+  }
+
+});
+</script>
 </body>
 </html>
