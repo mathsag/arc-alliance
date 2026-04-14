@@ -1545,8 +1545,8 @@ async function loadAlliancePlayers(alliance) {
 
   var seasonCount = ALL_SEASONS.length;
   var html = '<div data-alliance="'+alliance+'" style="margin-bottom:0.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">';
-  html += '<input id="'+alliance+'-player-search" type="text" placeholder="S&oslash;k etter spiller..." oninput="filterPlayersFromInput(this)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
-  html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere · siste '+seasonCount+' sesonger</span>';
+  html += '<input id="'+alliance+'-player-search" type="text" placeholder="Søk etter spiller..." oninput="filterPlayersFromInput(this)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
+  html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere - siste '+seasonCount+' sesonger</span>';
   html += '</div>';
 
   html += '<table class="player-table" id="'+alliance+'-player-table"><thead><tr>' +
