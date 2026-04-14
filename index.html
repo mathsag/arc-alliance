@@ -657,7 +657,7 @@ footer {
   <div class="clan-content">
     <div class="tabs">
       <button class="tab active" onclick="switchTab(event,'arcline-stats')">📊 CWL-stats</button>
-      <button class="tab" onclick="switchTab(event,'arcline-klaner');loadKlanerInfo('arcline')">🏰 Klaner</button>
+      <button class="tab" onclick="switchTab(event,'arcline-klaner')">🏰 Klaner</button>
       <button class="tab" onclick="switchTab(event,'arcline-events')">📅 Arrangementer</button>
       <button class="tab" onclick="switchTab(event,'arcline-news')">📰 Nyheter</button>
       
@@ -778,8 +778,18 @@ footer {
 
     <!-- KLANER TAB -->
     <div class="tab-content" id="arcline-klaner">
-      <div id="arcline-klaner-content">
-        <div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">LASTER KLAN-INFO...</div>
+      <div class="clans-roster">
+        <div class="clan-chip clan-chip-blue">⚔<span class="clan-chip-name">Arcline</span></div>
+        <div class="clan-chip clan-chip-blue">🎮<span class="clan-chip-name">HW Esports</span></div>
+        <div class="clan-chip clan-chip-blue">🏔<span class="clan-chip-name">Hierarchy of W</span></div>
+        <div class="clan-chip clan-chip-blue">🇳🇴<span class="clan-chip-name">Robust Norge</span></div>
+        <div class="clan-chip clan-chip-blue">🎖<span class="clan-chip-name">ACM</span></div>
+        <div class="clan-chip clan-chip-blue">💪<span class="clan-chip-name">PAAK ARMY</span></div>
+        <div class="clan-chip clan-chip-blue">💀<span class="clan-chip-name">HOLLOW</span></div>
+        <div class="clan-chip clan-chip-blue">🤝<span class="clan-chip-name">HW Alliance</span></div>
+        <div class="clan-chip clan-chip-blue">✂<span class="clan-chip-name">Severance</span></div>
+        <div class="clan-chip clan-chip-blue">👥<span class="clan-chip-name">HW Community</span></div>
+        <div class="clan-chip clan-chip-blue">🌱<span class="clan-chip-name">Arcline Mini</span></div>
       </div>
     </div>
 
@@ -836,7 +846,7 @@ footer {
   <div class="clan-content">
     <div class="tabs">
       <button class="tab active" onclick="switchTab(event,'sunbath-stats')">📊 CWL-stats</button>
-      <button class="tab" onclick="switchTab(event,'sunbath-klaner');loadKlanerInfo('sunbath')">🏰 Klaner</button>
+      <button class="tab" onclick="switchTab(event,'sunbath-klaner')">🏰 Klaner</button>
       <button class="tab" onclick="switchTab(event,'sunbath-events')">📅 Arrangementer</button>
       <button class="tab" onclick="switchTab(event,'sunbath-news')">📰 Nyheter</button>
       
@@ -901,8 +911,12 @@ footer {
 
     <!-- KLANER -->
     <div class="tab-content" id="sunbath-klaner">
-      <div id="sunbath-klaner-content">
-        <div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">LASTER KLAN-INFO...</div>
+      <div class="clans-roster">
+        <div class="clan-chip clan-chip-red">🌅<span class="clan-chip-name">Arctic Sunbath</span></div>
+        <div class="clan-chip clan-chip-red">❄<span class="clan-chip-name">Arctic CWL</span></div>
+        <div class="clan-chip clan-chip-red">☀<span class="clan-chip-name">Sunbath CWL</span></div>
+        <div class="clan-chip clan-chip-red">🌙<span class="clan-chip-name">Arctic Solstice</span></div>
+        <div class="clan-chip clan-chip-red">⚡<span class="clan-chip-name">Solstice CWL</span></div>
       </div>
     </div>
 
@@ -1457,71 +1471,7 @@ var ALL_SEASONS    = ['2026-04','2026-03','2026-02','2026-01','2025-12','2025-11
 
 
 
-var klanerLoaded = {};
 
-async function loadKlanerInfo(alliance) {
-  var containerId = alliance + '-klaner-content';
-  var container = document.getElementById(containerId);
-  if (!container || klanerLoaded[alliance]) return;
-  klanerLoaded[alliance] = true;
-
-  var clans = alliance === 'arcline'
-    ? ['Hierarchy of W','Severance','Robust Norge','Arcline','HW Esports','ACM','PAAK ARMY','HOLLOW','HW Alliance','HW Community','Arcline Mini']
-    : ['Arctic Sunbath','Arctic CWL','Sunbath CWL','Arctic Solstice','Solstice CWL'];
-  var color = alliance === 'arcline' ? 'blue' : 'red';
-
-  container.innerHTML = '<div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER KLAN-INFO...</div>';
-
-  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">';
-
-  var fetches = clans.map(async function(clanName) {
-    var tag = CLAN_TAGS[clanName];
-    if (!tag) return {clanName: clanName, data: null};
-    try {
-      var res = await fetch(BASE + '/clan/' + tag);
-      if (!res.ok) return {clanName: clanName, data: null};
-      var d = await res.json();
-      return {clanName: clanName, data: d};
-    } catch(e) { return {clanName: clanName, data: null}; }
-  });
-
-  var results = await Promise.all(fetches);
-
-  results.forEach(function(r) {
-    var name = r.clanName;
-    var d = r.data;
-    if (!d) {
-      html += '<div class="clan-info-card clan-info-card-'+color+'">' +
-        '<div class="clan-info-name">'+name+'</div>' +
-        '<div class="clan-info-row"><span>Data ikke tilgjengelig</span></div>' +
-        '</div>';
-      return;
-    }
-    var level = d.clanLevel || d.clan_level || '?';
-    var members = d.members || d.member_count || '?';
-    var warLeague = (d.warLeague && d.warLeague.name) || CLAN_LEAGUES[name] || '—';
-    var warWins = d.warWins != null ? d.warWins : '—';
-    var winStreak = d.warWinStreak != null ? d.warWinStreak : '—';
-    var clanPoints = d.clanPoints || d.clan_points || '—';
-    var desc = d.description ? d.description.substring(0,80)+(d.description.length>80?'...':'') : '';
-    var isApril = APRIL_CLANS.has(name) ? '<span style="color:#66DD66;font-size:0.65rem;">CWL APR</span>' : '';
-
-    html += '<div class="clan-info-card clan-info-card-'+color+'">' +
-      '<div class="clan-info-name" style="display:flex;justify-content:space-between;align-items:center;">' +
-        '<span>'+name+'</span>'+isApril+
-      '</div>';
-    if (desc) html += '<div style="font-size:0.68rem;color:rgba(232,224,204,0.4);margin-bottom:0.6rem;line-height:1.4;">'+desc+'</div>';
-    html += '<div class="clan-info-row"><span>Nivå</span><span class="clan-info-val">'+level+'</span></div>';
-    html += '<div class="clan-info-row"><span>Medlemmer</span><span class="clan-info-val">'+members+'/50</span></div>';
-    html += '<div class="clan-info-row"><span>Krigsliga</span><span class="clan-info-val" style="font-size:0.65rem;">'+warLeague+'</span></div>';
-    html += '<div class="clan-info-row"><span>Krig-seire</span><span class="clan-info-val">'+warWins+'</span></div>';
-    if (winStreak > 0) html += '<div class="clan-info-row"><span>Win streak</span><span class="clan-info-val" style="color:#66DD66;">'+winStreak+'</span></div>';
-    html += '</div>';
-  });
-
-  html += '</div>';
-  container.innerHTML = html;
-}
 
 function closeModal() {
   document.getElementById('statModal').classList.remove('open');
