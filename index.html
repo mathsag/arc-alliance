@@ -1488,19 +1488,13 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 
 
 
-<!DOCTYPE html>
-<!-- ══════════════════════════════════════════════════════════════
-     ARC ALLIANCE — PATCH FILE
-     Legg innholdet av denne filen inn i arc-alliance.html
-     rett FØR </body> taggen.
-     ══════════════════════════════════════════════════════════════ -->
+<!-- ARC ALLIANCE PATCH — lim inn rett før </body> -->
 
 <style>
 /* ════════════════════════════════════
    MOBILE FIXES
    ════════════════════════════════════ */
 
-/* Hero: ingen vertikal scrolling/flex-endring på mobil */
 @media (max-width: 768px) {
   .hero-half,
   .hero:hover .hero-half,
@@ -1510,10 +1504,8 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
     transition: none !important;
   }
 
-  /* Skjul scroll hint */
   .scroll-hint { display: none !important; }
 
-  /* Arrangementer-tabell: ingen horisontal scroll */
   .events-table-wrapper { overflow-x: hidden !important; }
   .events-table {
     min-width: 0 !important;
@@ -1523,11 +1515,9 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
   }
   .events-table th,
   .events-table td { padding: 0.45rem 0.3rem !important; word-break: break-word; }
-  /* Skjul Dato-kolonne på smal skjerm — Navn+Type+Status er nok */
   .events-table th:nth-child(3),
   .events-table td:nth-child(3) { display: none; }
 
-  /* Modal: pass på at den ikke er bredere enn skjermen */
   .modal-overlay {
     padding: 0.5rem !important;
     align-items: flex-start !important;
@@ -1551,14 +1541,12 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
   .modal-stat-box { padding: 0.7rem !important; }
   .modal-stat-val { font-size: 0.95rem !important; }
 
-  /* Modal season-picker row: stack vertikalt */
   .modal-body > div:first-child {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 0.5rem !important;
   }
 
-  /* Modal tabs: horisontal scroll */
   .modal-tabs {
     overflow-x: auto !important;
     flex-wrap: nowrap !important;
@@ -1574,12 +1562,13 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
     flex-shrink: 0;
   }
 
-  /* April badge + CWL badge: mer plass */
   .april-badge { right: 10px !important; letter-spacing: 0.5px; }
   .stat-card-header { flex-wrap: wrap; gap: 0.4rem; }
   .stat-card-badge { margin-top: 0.1rem; }
 
-  /* Spillertabell i modal */
+  /* Skjul prosent-bar i spillertabell */
+  .pct-bar { display: none !important; }
+
   #tab-players, #tab-wars, #tab-mvp {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1590,7 +1579,6 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 }
 
 @media (max-width: 480px) {
-  /* Enda en kolonne bort på veldig smale skjermer */
   .events-table th:nth-child(4),
   .events-table td:nth-child(4) { display: none; }
 }
@@ -1633,22 +1621,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  /* 4. Events-tabeller: Alliance Championship → Alliance Cup */
+  /* 4. Events-tabeller: Alliance Championship → Alliance Cup + alle datoer → Kommer snart */
   document.querySelectorAll('.events-table tbody tr').forEach(function(row) {
     var cells = row.querySelectorAll('td');
     if (cells[0] && cells[0].textContent.includes('Alliance Championship')) {
       cells[0].textContent = 'Alliance Cup';
-      if (cells[3]) {
-        cells[3].textContent = 'Kommer snart';
-        cells[3].style.color = 'rgba(232,224,204,0.45)';
-      }
     }
+    /* Dato-kolonne (index 2) → Kommer snart */
+    if (cells[2]) {
+      cells[2].textContent = 'Kommer snart';
+    }
+    /* Status-kolonne (index 3) — behold som den er */
   });
 
   /* 5. Sesong-velger: legg til hint */
   var picker = document.getElementById('seasonPicker');
   if (picker) {
-    var pickerWrap = picker.parentElement;
     var hint = document.createElement('div');
     hint.style.cssText = [
       'font-family:Cinzel,serif',
@@ -1659,15 +1647,13 @@ document.addEventListener('DOMContentLoaded', function() {
       'text-align:center'
     ].join(';');
     hint.textContent = 'Velg måned for historikk';
-    pickerWrap.appendChild(hint);
+    picker.parentElement.appendChild(hint);
   }
 
-  /* 6. KOTH-banner: oppdater tekst med Discord-lenke */
+  /* 6. KOTH-banner: Discord-lenke */
   var kothDesc = document.querySelector('.koth-desc');
   if (kothDesc && kothDesc.textContent.includes('Begge allianser')) {
-    kothDesc.innerHTML = 'Begge allianser kjemper om én trone. Kun én kan kalle seg mester av Arc Alliance. Detaljer og standings på '
-      + '<a href="https://discord.gg/arc-alliance" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none;">'
-      + 'discord.gg/arc-alliance</a>.';
+    kothDesc.innerHTML = 'Begge allianser kjemper om én trone. Kun én kan kalle seg mester av Arc Alliance. Detaljer på <a href="https://discord.gg/arc-alliance" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none;">discord.gg/arc-alliance</a>.';
   }
 
   /* 7. Discord-kort i nyheter */
