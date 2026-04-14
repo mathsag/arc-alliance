@@ -205,6 +205,16 @@ nav {
 .stats-section-title { font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,215,0,0.2); color: var(--gold); }
 
 .clans-roster { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3rem; }
+.clan-info-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 3px; padding: 1rem; transition: border-color 0.2s; }
+.clan-info-card:hover { border-color: rgba(255,215,0,0.25); }
+.clan-info-card-blue { border-color: rgba(74,144,217,0.2); }
+.clan-info-card-blue:hover { border-color: rgba(74,144,217,0.4); }
+.clan-info-card-red { border-color: rgba(204,34,34,0.2); }
+.clan-info-card-red:hover { border-color: rgba(204,34,34,0.4); }
+.clan-info-name { font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; color: var(--text-light); margin-bottom: 0.6rem; }
+.clan-info-row { display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: 0.68rem; color: rgba(232,224,204,0.5); padding: 0.2rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.clan-info-row:last-child { border-bottom: none; }
+.clan-info-val { color: var(--text-light); font-weight: 500; }
 .clan-chip {
   padding: 1rem 1.2rem; border-radius: 2px; text-align: center;
   font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 1px;
@@ -646,11 +656,11 @@ footer {
 
   <div class="clan-content">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab(event,'arcline-stats')">📊 Stats</button>
-      <button class="tab" onclick="switchTab(event,'arcline-klaner')">🏰 Klaner</button>
+      <button class="tab active" onclick="switchTab(event,'arcline-stats')">📊 CWL-stats</button>
+      <button class="tab" onclick="switchTab(event,'arcline-klaner');loadKlanerInfo('arcline')">🏰 Klaner</button>
       <button class="tab" onclick="switchTab(event,'arcline-events')">📅 Arrangementer</button>
       <button class="tab" onclick="switchTab(event,'arcline-news')">📰 Nyheter</button>
-      <button class="tab" onclick="switchTab(event,'arcline-players');loadAlliancePlayers('arcline')">👤 Spillere</button>
+      
 
     </div>
 
@@ -768,19 +778,8 @@ footer {
 
     <!-- KLANER TAB -->
     <div class="tab-content" id="arcline-klaner">
-      <p style="color:rgba(232,224,204,0.6);margin-bottom:1.5rem;font-size:0.95rem;">Arcline-alliansen består av 11 klaner med ulike krav og fokus, fra toppkrig til feeder og community.</p>
-      <div class="clans-roster">
-        <div class="clan-chip clan-chip-blue">⚔<span class="clan-chip-name">Arcline</span></div>
-        <div class="clan-chip clan-chip-blue">🎮<span class="clan-chip-name">HW Esports</span></div>
-        <div class="clan-chip clan-chip-blue">🏔<span class="clan-chip-name">Hierarchy of W</span></div>
-        <div class="clan-chip clan-chip-blue">🇳🇴<span class="clan-chip-name">Robust Norge</span></div>
-        <div class="clan-chip clan-chip-blue">🎖<span class="clan-chip-name">ACM</span></div>
-        <div class="clan-chip clan-chip-blue">💪<span class="clan-chip-name">PAAK ARMY</span></div>
-        <div class="clan-chip clan-chip-blue">💀<span class="clan-chip-name">HOLLOW</span></div>
-        <div class="clan-chip clan-chip-blue">🤝<span class="clan-chip-name">HW Alliance</span></div>
-        <div class="clan-chip clan-chip-blue">✂<span class="clan-chip-name">Severance</span></div>
-        <div class="clan-chip clan-chip-blue">👥<span class="clan-chip-name">HW Community</span></div>
-        <div class="clan-chip clan-chip-blue">🌱<span class="clan-chip-name">Arcline Mini</span></div>
+      <div id="arcline-klaner-content">
+        <div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">LASTER KLAN-INFO...</div>
       </div>
     </div>
 
@@ -819,13 +818,7 @@ footer {
         </div>
       </div>
     </div>
-
-    <!-- SPILLERE TAB -->
-    <div class="tab-content" id="arcline-players">
-      <div id="arcline-players-content" style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">
-        Klikk på Spillere-tabben for å laste historikk...
-      </div>
-    </div>
+</div>
 
   </div>
 </section>
@@ -842,11 +835,11 @@ footer {
 
   <div class="clan-content">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab(event,'sunbath-stats')">📊 Stats</button>
-      <button class="tab" onclick="switchTab(event,'sunbath-klaner')">🏰 Klaner</button>
+      <button class="tab active" onclick="switchTab(event,'sunbath-stats')">📊 CWL-stats</button>
+      <button class="tab" onclick="switchTab(event,'sunbath-klaner');loadKlanerInfo('sunbath')">🏰 Klaner</button>
       <button class="tab" onclick="switchTab(event,'sunbath-events')">📅 Arrangementer</button>
       <button class="tab" onclick="switchTab(event,'sunbath-news')">📰 Nyheter</button>
-      <button class="tab" onclick="switchTab(event,'sunbath-players');loadAlliancePlayers('sunbath')">👤 Spillere</button>
+      
 
     </div>
 
@@ -908,13 +901,8 @@ footer {
 
     <!-- KLANER -->
     <div class="tab-content" id="sunbath-klaner">
-      <p style="color:rgba(232,224,204,0.6);margin-bottom:1.5rem;font-size:0.95rem;">Arctic Sunbath-alliansen har 5 spesialiserte klaner med fokus på toppytelse i CW og CWL.</p>
-      <div class="clans-roster" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
-        <div class="clan-chip clan-chip-red">🌅<span class="clan-chip-name">Arctic Sunbath</span></div>
-        <div class="clan-chip clan-chip-red">❄<span class="clan-chip-name">Arctic CWL</span></div>
-        <div class="clan-chip clan-chip-red">☀<span class="clan-chip-name">Sunbath CWL</span></div>
-        <div class="clan-chip clan-chip-red">🌙<span class="clan-chip-name">Arctic Solstice</span></div>
-        <div class="clan-chip clan-chip-red">⚡<span class="clan-chip-name">Solstice CWL</span></div>
+      <div id="sunbath-klaner-content">
+        <div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">LASTER KLAN-INFO...</div>
       </div>
     </div>
 
@@ -957,13 +945,7 @@ footer {
         </div>
       </div>
     </div>
-
-    <!-- SPILLERE TAB -->
-    <div class="tab-content" id="sunbath-players">
-      <div id="sunbath-players-content" style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">
-        Klikk på Spillere-tabben for å laste historikk...
-      </div>
-    </div>
+</div>
 
   </div>
 </section>
@@ -1054,19 +1036,9 @@ function switchTab(e, tabId) {
     </div>
   </div>
 </div>
-
-<!-- PLAYER PROFILE MODAL -->
-<div class="modal-overlay" id="playerModal" onclick="closePlayerModalOutside(event)">
-  <div class="modal-box" style="max-width:700px;">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="playerModalName">—</div>
-        <div class="modal-subtitle" id="playerModalSub">—</div>
-      </div>
+</div>
       <button class="modal-close" onclick="closePlayerModal()">✕</button>
     </div>
-    <div id="playerModalContent" style="padding:0.5rem 0;">
-      <div style="text-align:center;color:rgba(232,224,204,0.4);padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;">LASTER SPILLERHISTORIKK...</div>
     </div>
   </div>
 </div>
@@ -1129,14 +1101,13 @@ async function fetchRawCWL(clanName, season) {
   if (!tag) return null;
   var cacheKey = 'raw_' + clanName + '_' + s;
   if (dataCache[cacheKey]) return dataCache[cacheKey];
-  if (knownMissing[cacheKey]) return null;
   try {
     var res = await fetch(BASE + '/cwl/' + tag + '/' + s);
-    if (!res.ok) { knownMissing[cacheKey] = true; return null; }
+    if (!res.ok) { return null; }
     var d = await res.json();
     if (d) dataCache[cacheKey] = d;
     return d;
-  } catch(e) { knownMissing[cacheKey] = true; return null; }
+  } catch(e) { return null; }
 }
 
 async function fetchClanCWL(clanName, season) {
@@ -1282,12 +1253,9 @@ function buildPlayerTable(rawData, clanTag) {
 
     var pctBar = p.attacks.length > 0 ? '<div class="pct-bar"><div class="pct-fill" style="width:'+Math.min(avgPct,100)+'%"></div></div>' : '';
 
-    var safeModalTag = (p.tag||'').replace(/['"]/g,'');
-    var safeModalName = (p.name||'').replace(/['"]/g,'');
-    var safeModalClan = (_currentModalClan||'').replace(/['"]/g,'');
     playerHtml += '<tr>' +
       '<td style="color:rgba(232,224,204,0.4);font-size:0.75rem;">'+(idx+1)+'</td>' +
-      '<td style="font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+p.name+'"><span class="player-link" data-tag="'+safeModalTag+'" data-pname="'+safeModalName+'" data-clan="'+safeModalClan+'" onclick="openPlayerModal(this.dataset.tag,this.dataset.pname,this.dataset.clan)" style="cursor:pointer;color:var(--gold);text-decoration:underline dotted;">'+p.name+'</span></td>' +
+      '<td style="font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+p.name+'">'+p.name+'</td>' +
       '<td><span class="th-badge">'+p.th+'</span></td>' +
       '<td style="max-width:140px;">'+attackStr+'</td>' +
       '<td style="color:var(--gold);font-family:Cinzel,serif;">⭐ '+totalStars+'</td>' +
@@ -1465,296 +1433,94 @@ async function openModal(clanName) {
 
 // ── ALLIANCE PLAYER HISTORY ──────────────────────────────────────────────────
 
-var ARCLINE_CLANS  = ['Hierarchy of W','Severance','Robust Norge','Arcline','HW Esports','ACM','PAAK ARMY','HOLLOW','HW Alliance','HW Community','Arcline Mini'];
-var SUNBATH_CLANS  = ['Arctic Sunbath','Arctic CWL','Sunbath CWL','Arctic Solstice','Solstice CWL'];
+
+
 var ALL_SEASONS    = ['2026-04','2026-03','2026-02','2026-01','2025-12','2025-11'];
-var playerHistoryLoaded = {};
 
-async function loadAlliancePlayers(alliance) {
-  var containerId = alliance + '-players-content';
-  var container = document.getElementById(containerId);
-  if (!container) return;
-  if (playerHistoryLoaded[alliance]) return;
 
-  container.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER SPILLERHISTORIKK FOR ALLE SESONGER...</div>';
 
-  var allClansForAlliance = alliance === 'arcline' ? ARCLINE_CLANS : SUNBATH_CLANS;
-  var players = {}; // tag -> {name, th, clan, totalAtk, totalStars, total3, totalPct, seasons:{}}
 
-  // Fetch ALL seasons for ALL clans in this alliance — ignore 404s silently
-  for (var si = 0; si < ALL_SEASONS.length; si++) {
-    var season = ALL_SEASONS[si];
-    for (var ci = 0; ci < allClansForAlliance.length; ci++) {
-      var clanName = allClansForAlliance[ci];
-      var cacheKey = 'raw_' + clanName + '_' + season;
-      var rawData = dataCache[cacheKey];
-      if (!rawData) {
-        try { rawData = await fetchRawCWL(clanName, season); } catch(e) {}
-      }
-      if (!rawData || !rawData.rounds) continue;
 
-      var cleanTag = decodeURIComponent(CLAN_TAGS[clanName]||'').replace('#','');
 
-      rawData.rounds.forEach(function(round) {
-        if (!round.wars) return;
-        round.wars.forEach(function(war) {
-          var ourSide = null;
-          if (war.clan && war.clan.tag && war.clan.tag.replace('#','') === cleanTag) ourSide = war.clan;
-          else if (war.opponent && war.opponent.tag && war.opponent.tag.replace('#','') === cleanTag) ourSide = war.opponent;
-          if (!ourSide || !ourSide.members) return;
 
-          ourSide.members.forEach(function(m) {
-            if (!m.tag) return;
-            if (!players[m.tag]) {
-              players[m.tag] = {
-                name: m.name || '?',
-                th: m.townhallLevel || m.townHallLevel || '?',
-                clan: clanName,
-                totalAtk: 0, totalStars: 0, total3: 0, totalPct: 0, seasons: {}
-              };
-            }
-            if (!players[m.tag].seasons[season]) {
-              players[m.tag].seasons[season] = {atk:0, stars:0, three:0, pct:0};
-            }
-            (m.attacks||[]).forEach(function(a) {
-              players[m.tag].totalAtk++;
-              players[m.tag].totalStars += (a.stars||0);
-              players[m.tag].totalPct += (a.destructionPercentage||0);
-              if (a.stars === 3) players[m.tag].total3++;
-              players[m.tag].seasons[season].atk++;
-              players[m.tag].seasons[season].stars += (a.stars||0);
-              players[m.tag].seasons[season].pct += (a.destructionPercentage||0);
-              if (a.stars === 3) players[m.tag].seasons[season].three++;
-            });
-          });
-        });
-      });
-    }
-  }
 
-  var sorted = Object.keys(players).map(function(tag) {
-    var p = players[tag];
-    p.tag = tag;
-    return p;
-  }).filter(function(p){ return p.totalAtk > 0; })
-    .sort(function(a,b){ return b.totalStars - a.totalStars; });
 
-  if (sorted.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;color:rgba(232,224,204,0.4);">Ingen spillerdata funnet</div>';
-    playerHistoryLoaded[alliance] = true;
-    return;
-  }
 
-  var seasonCount = ALL_SEASONS.length;
-  var html = '<div data-alliance="'+alliance+'" style="margin-bottom:0.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">';
-  html += '<input id="'+alliance+'-player-search" type="text" placeholder="Søk etter spiller..." oninput="filterPlayersFromInput(this)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.2);color:var(--text-light);font-family:Cinzel,serif;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:2px;outline:none;">';
-  html += '<span style="font-family:Cinzel,serif;font-size:0.7rem;color:rgba(232,224,204,0.4);">'+sorted.length+' spillere - siste '+seasonCount+' sesonger</span>';
-  html += '</div>';
-
-  html += '<table class="player-table" id="'+alliance+'-player-table"><thead><tr>' +
-    '<th>#</th><th>Spiller</th><th>TH</th><th>Klan</th><th>Angrep</th><th>⭐ Total</th><th>3★</th><th>Snitt %</th><th>Sesonger</th>' +
-    '</tr></thead><tbody>';
-
-  sorted.forEach(function(p, idx) {
-    var avgPct = p.totalAtk > 0 ? (p.totalPct / p.totalAtk).toFixed(0) : '—';
-    var seasonsPlayed = Object.keys(p.seasons).length;
-    var safeTag = p.tag ? p.tag.replace(/['"\\]/g,'') : '';
-    var safeName = p.name ? p.name.replace(/['"\\]/g,'') : '?';
-    var safeClan = p.clan ? p.clan.replace(/['"\\]/g,'') : '';
-    html += '<tr class="player-history-row" data-name="'+(p.name||'').toLowerCase()+'" data-tag="'+safeTag+'" data-pname="'+safeName+'" data-clan="'+safeClan+'" onclick="openPlayerModal(this.dataset.tag,this.dataset.pname,this.dataset.clan)" style="cursor:pointer;">' +
-      '<td style="color:rgba(232,224,204,0.4);font-size:0.75rem;">'+(idx+1)+'</td>' +
-      '<td style="font-weight:500;color:var(--gold);">'+(p.name||'?')+'</td>' +
-      '<td><span class="th-badge">'+p.th+'</span></td>' +
-      '<td style="font-size:0.72rem;color:rgba(232,224,204,0.5);">'+p.clan+'</td>' +
-      '<td style="font-family:Cinzel,serif;">'+p.totalAtk+'</td>' +
-      '<td style="color:var(--gold);font-family:Cinzel,serif;">⭐ '+p.totalStars+'</td>' +
-      '<td style="color:#66DD66;font-family:Cinzel,serif;">'+p.total3+'x</td>' +
-      '<td style="color:var(--gold);">'+avgPct+'%</td>' +
-      '<td style="font-family:Cinzel,serif;font-size:0.72rem;color:rgba(232,224,204,0.5);">'+seasonsPlayed+'/'+seasonCount+'</td>' +
-      '</tr>';
-  });
-
-  html += '</tbody></table>';
-  html += '<p style="font-size:0.68rem;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;letter-spacing:1px;margin-top:0.5rem;">Klikk på en spiller for detaljert sesonghistorikk</p>';
-
-  container.innerHTML = html;
-  playerHistoryLoaded[alliance] = true;
-}
-
-function filterPlayersFromInput(el) {
-  var alliance = el.id.replace('-player-search', '');
-  filterPlayers(alliance);
-}
-
-function filterPlayers(alliance) {
-  var q = document.getElementById(alliance+'-player-search').value.toLowerCase();
-  var rows = document.querySelectorAll('#'+alliance+'-player-table .player-history-row');
-  rows.forEach(function(row) {
-    row.style.display = row.dataset.name.includes(q) ? '' : 'none';
-  });
-}
 
 // ── PLAYER PROFILE MODAL ─────────────────────────────────────────────────────
 
-var playerModalLoaded = {};
-var knownMissing = {}; // cache of clan+season combos that 404
+ // cache of clan+season combos that 404
 
-async function openPlayerModal(tag, name, clanName) {
-  var modal = document.getElementById('playerModal');
-  document.getElementById('playerModalName').textContent = name;
-  document.getElementById('playerModalSub').textContent = clanName || '—';
-  document.getElementById('playerModalContent').innerHTML = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER HISTORIKK...</div>';
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
 
-  var cacheKey = 'player_' + tag;
-  if (playerModalLoaded[cacheKey]) {
-    document.getElementById('playerModalContent').innerHTML = playerModalLoaded[cacheKey];
-    return;
-  }
 
-  // Gather data across all seasons
-  var seasonData = {}; // season -> {atk, stars, three, pct, participated}
 
-  for (var si = 0; si < ALL_SEASONS.length; si++) {
-    var season = ALL_SEASONS[si];
-    seasonData[season] = {atk:0, stars:0, three:0, pct:0, participated: false};
 
-    // Search in all clans
-    var allClans = ARCLINE_CLANS.concat(SUNBATH_CLANS);
-    for (var ci = 0; ci < allClans.length; ci++) {
-      var cn = allClans[ci];
-      var rawCacheKey = 'raw_' + cn + '_' + season;
-      var rawData = dataCache[rawCacheKey];
-      if (!rawData) rawData = await fetchRawCWL(cn, season);
-      if (!rawData || !rawData.rounds) continue;
 
-      var found = false;
-      rawData.rounds.forEach(function(round) {
-        if (!round.wars) return;
-        round.wars.forEach(function(war) {
-          [war.clan, war.opponent].forEach(function(side) {
-            if (!side || !side.members) return;
-            side.members.forEach(function(m) {
-              if (m.tag !== tag) return;
-              found = true;
-              seasonData[season].participated = true;
-              (m.attacks||[]).forEach(function(a) {
-                seasonData[season].atk++;
-                seasonData[season].stars += a.stars;
-                seasonData[season].pct += a.destructionPercentage;
-                if (a.stars === 3) seasonData[season].three++;
-              });
-            });
-          });
-        });
-      });
-      if (found) break; // found in this clan, no need to search others
-    }
-  }
 
-  // Build modal HTML
-  var participated = ALL_SEASONS.filter(function(s){ return seasonData[s].participated; });
+var klanerLoaded = {};
 
-  if (participated.length === 0) {
-    var html = '<div style="text-align:center;padding:2rem;font-family:Cinzel,serif;font-size:0.75rem;color:rgba(232,224,204,0.4);">Ingen CWL-data funnet for denne spilleren</div>';
-    document.getElementById('playerModalContent').innerHTML = html;
-    playerModalLoaded[cacheKey] = html;
-    return;
-  }
+async function loadKlanerInfo(alliance) {
+  var containerId = alliance + '-klaner-content';
+  var container = document.getElementById(containerId);
+  if (!container || klanerLoaded[alliance]) return;
+  klanerLoaded[alliance] = true;
 
-  var totalAtk   = participated.reduce(function(s,season){ return s + seasonData[season].atk; }, 0);
-  var totalStars = participated.reduce(function(s,season){ return s + seasonData[season].stars; }, 0);
-  var total3     = participated.reduce(function(s,season){ return s + seasonData[season].three; }, 0);
-  var totalPct   = participated.reduce(function(s,season){ return s + seasonData[season].pct; }, 0);
-  var avgPct     = totalAtk > 0 ? (totalPct/totalAtk).toFixed(1) : '—';
-  var avg3pct    = totalAtk > 0 ? ((total3/totalAtk)*100).toFixed(0) : '0';
-  var avgStars   = totalAtk > 0 ? (totalStars/totalAtk).toFixed(2) : '—';
+  var clans = alliance === 'arcline'
+    ? ['Hierarchy of W','Severance','Robust Norge','Arcline','HW Esports','ACM','PAAK ARMY','HOLLOW','HW Alliance','HW Community','Arcline Mini']
+    : ['Arctic Sunbath','Arctic CWL','Sunbath CWL','Arctic Solstice','Solstice CWL'];
+  var color = alliance === 'arcline' ? 'blue' : 'red';
 
-  var MONTH_NO = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'Mai','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Okt','11':'Nov','12':'Des'};
-  function fmtSeason(s) { var p=s.split('-'); return (MONTH_NO[p[1]]||p[1])+' '+p[0]; }
+  container.innerHTML = '<div style="text-align:center;padding:1.5rem;font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;color:rgba(232,224,204,0.4);">HENTER KLAN-INFO...</div>';
 
-  var html = '';
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">';
 
-  // Summary cards
-  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;">';
-  [
-    {label:'Sesonger', val: participated.length},
-    {label:'⭐ Totalt', val: totalStars},
-    {label:'3★ Rate', val: avg3pct+'%'},
-    {label:'Snitt %', val: avgPct+'%'},
-  ].forEach(function(c) {
-    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.15);border-radius:2px;padding:0.7rem;text-align:center;">' +
-      '<div style="font-family:Cinzel,serif;font-size:1rem;color:var(--gold);">'+c.val+'</div>' +
-      '<div style="font-family:Cinzel,serif;font-size:0.62rem;color:rgba(232,224,204,0.5);letter-spacing:1px;margin-top:0.2rem;">'+c.label+'</div>' +
-      '</div>';
+  var fetches = clans.map(async function(clanName) {
+    var tag = CLAN_TAGS[clanName];
+    if (!tag) return {clanName: clanName, data: null};
+    try {
+      var res = await fetch(BASE + '/clan/' + tag);
+      if (!res.ok) return {clanName: clanName, data: null};
+      var d = await res.json();
+      return {clanName: clanName, data: d};
+    } catch(e) { return {clanName: clanName, data: null}; }
   });
-  html += '</div>';
 
-  // Season by season table
-  html += '<div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:3px;color:rgba(255,215,0,0.5);margin-bottom:0.5rem;">SESONGHISTORIKK</div>';
-  html += '<table class="player-table"><thead><tr><th>Sesong</th><th>Angrep</th><th>⭐</th><th>3★</th><th>Snitt %</th><th>Trend</th></tr></thead><tbody>';
+  var results = await Promise.all(fetches);
 
-  var prevStarAvg = null;
-  ALL_SEASONS.forEach(function(season) {
-    var d = seasonData[season];
-    if (!d.participated) {
-      html += '<tr><td style="color:rgba(232,224,204,0.4);">'+fmtSeason(season)+'</td>' +
-        '<td colspan="5" style="color:rgba(232,224,204,0.2);font-size:0.7rem;">Deltok ikke</td></tr>';
+  results.forEach(function(r) {
+    var name = r.clanName;
+    var d = r.data;
+    if (!d) {
+      html += '<div class="clan-info-card clan-info-card-'+color+'">' +
+        '<div class="clan-info-name">'+name+'</div>' +
+        '<div class="clan-info-row"><span>Data ikke tilgjengelig</span></div>' +
+        '</div>';
       return;
     }
-    var sAvgPct   = d.atk > 0 ? (d.pct/d.atk).toFixed(0) : '—';
-    var sAvgStars = d.atk > 0 ? (d.stars/d.atk) : null;
-    var trend = '';
-    if (sAvgStars !== null && prevStarAvg !== null) {
-      if (sAvgStars > prevStarAvg + 0.1) trend = '<span style="color:#66DD66;">▲</span>';
-      else if (sAvgStars < prevStarAvg - 0.1) trend = '<span style="color:#ff6666;">▼</span>';
-      else trend = '<span style="color:rgba(232,224,204,0.3);">—</span>';
-    }
-    if (sAvgStars !== null) prevStarAvg = sAvgStars;
-    var s3pct = d.atk > 0 ? ((d.three/d.atk)*100).toFixed(0)+'%' : '—';
+    var level = d.clanLevel || d.clan_level || '?';
+    var members = d.members || d.member_count || '?';
+    var warLeague = (d.warLeague && d.warLeague.name) || CLAN_LEAGUES[name] || '—';
+    var warWins = d.warWins != null ? d.warWins : '—';
+    var winStreak = d.warWinStreak != null ? d.warWinStreak : '—';
+    var clanPoints = d.clanPoints || d.clan_points || '—';
+    var desc = d.description ? d.description.substring(0,80)+(d.description.length>80?'...':'') : '';
+    var isApril = APRIL_CLANS.has(name) ? '<span style="color:#66DD66;font-size:0.65rem;">CWL APR</span>' : '';
 
-    html += '<tr>' +
-      '<td style="font-weight:500;">'+fmtSeason(season)+'</td>' +
-      '<td>'+d.atk+'</td>' +
-      '<td style="color:var(--gold);">'+d.stars+'</td>' +
-      '<td style="color:#66DD66;">'+d.three+'</td>' +
-      '<td>'+sAvgPct+'%</td>' +
-      '<td>'+trend+'</td>' +
-      '</tr>';
-  });
-  html += '</tbody></table>';
-
-  // Bar chart of stars per season
-  html += '<div style="margin-top:1rem;">';
-  html += '<div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:3px;color:rgba(255,215,0,0.5);margin-bottom:0.5rem;">STJERNER PER SESONG</div>';
-  html += '<div style="display:flex;align-items:flex-end;gap:0.4rem;height:60px;">';
-  var maxStars = Math.max.apply(null, ALL_SEASONS.map(function(s){ return seasonData[s].stars||0; }));
-  ALL_SEASONS.forEach(function(season) {
-    var d = seasonData[season];
-    var h = maxStars > 0 ? Math.max(4, Math.round((d.stars/maxStars)*56)) : 4;
-    var col = d.participated ? 'var(--gold)' : 'rgba(255,215,0,0.15)';
-    html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;">' +
-      '<div style="font-family:Cinzel,serif;font-size:0.6rem;color:rgba(255,215,0,0.6);">'+(d.participated?d.stars:'')+'</div>' +
-      '<div style="width:100%;height:'+h+'px;background:'+col+';border-radius:2px 2px 0 0;"></div>' +
-      '<div style="font-family:Cinzel,serif;font-size:0.55rem;color:rgba(232,224,204,0.4);">'+fmtSeason(season).split(' ')[0]+'</div>' +
+    html += '<div class="clan-info-card clan-info-card-'+color+'">' +
+      '<div class="clan-info-name" style="display:flex;justify-content:space-between;align-items:center;">' +
+        '<span>'+name+'</span>'+isApril+
       '</div>';
+    if (desc) html += '<div style="font-size:0.68rem;color:rgba(232,224,204,0.4);margin-bottom:0.6rem;line-height:1.4;">'+desc+'</div>';
+    html += '<div class="clan-info-row"><span>Nivå</span><span class="clan-info-val">'+level+'</span></div>';
+    html += '<div class="clan-info-row"><span>Medlemmer</span><span class="clan-info-val">'+members+'/50</span></div>';
+    html += '<div class="clan-info-row"><span>Krigsliga</span><span class="clan-info-val" style="font-size:0.65rem;">'+warLeague+'</span></div>';
+    html += '<div class="clan-info-row"><span>Krig-seire</span><span class="clan-info-val">'+warWins+'</span></div>';
+    if (winStreak > 0) html += '<div class="clan-info-row"><span>Win streak</span><span class="clan-info-val" style="color:#66DD66;">'+winStreak+'</span></div>';
+    html += '</div>';
   });
-  html += '</div></div>';
 
-  html += '<a href="https://www.clashofstats.com/players/'+tag.replace('#','')+'" target="_blank" style="display:inline-block;margin-top:1rem;padding:5px 14px;border:1px solid rgba(255,215,0,0.3);border-radius:2px;font-family:Cinzel,serif;font-size:0.68rem;color:var(--gold);text-decoration:none;">Se på ClashOfStats ↗</a>';
-
-  document.getElementById('playerModalContent').innerHTML = html;
-  playerModalLoaded[cacheKey] = html;
-}
-
-function closePlayerModal() {
-  document.getElementById('playerModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function closePlayerModalOutside(e) {
-  if (e.target === document.getElementById('playerModal')) closePlayerModal();
+  html += '</div>';
+  container.innerHTML = html;
 }
 
 function closeModal() {
