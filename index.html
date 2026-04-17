@@ -690,127 +690,22 @@ footer {
       <div class="stats-month-header">
         <div>
           <div class="stats-month-label">Viser statistikk for</div>
-          <div class="stats-month-value">April 2026</div>
+          <div class="stats-month-value" id="arcline-stats-maaned">April 2026</div>
         </div>
         <div class="stats-legend">
           <div class="legend-item"><div class="legend-dot-active"></div> Spilte denne måneden</div>
           <div class="legend-item"><div class="legend-dot-inactive"></div> Deltok ikke</div>
         </div>
       </div>
-      <div class="stats-cards">
-        <div class="stat-card stat-card-blue" onclick="openModal('Hierarchy of W')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Hierarchy of W</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 310</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#3 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue" onclick="openModal('Severance')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Severance</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">3W - 4T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 210</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#4 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue" onclick="openModal('Robust Norge')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Robust Norge</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester II</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 250</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('Arcline')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">Arcline</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Mesterliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">5W - 2T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 340</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('HW Esports')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">HW Esports</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">6W - 1T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 280</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#1 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('ACM')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">ACM</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">5W - 2T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 340</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('PAAK ARMY')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">PAAK ARMY</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Mesterliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">5W - 2T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 290</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('HOLLOW')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">HOLLOW</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 230</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#3 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('HW Alliance')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">HW Alliance</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga II</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 190</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('HW Community')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">HW Community</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga III</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">3W - 4T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 160</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#3 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('Arcline Mini')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">Arcline Mini</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Gulliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 120</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-blue inactive" onclick="openModal('HW Esports')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">HW Esports</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Sølvliga II</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-blue">3W - 4T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 100</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-blue">#4 i gruppen</span></div>
-        </div>
+      <div class="stats-cards" id="arcline-stats-cards">
+        <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:2rem;">LASTER...</div>
       </div>
     </div>
 
     <!-- KLANER TAB -->
     <div class="tab-content" id="arcline-klaner">
-      <div class="clans-roster">
-        <div class="clan-chip clan-chip-blue">⚔<span class="clan-chip-name">Arcline</span></div>
-        <div class="clan-chip clan-chip-blue">🎮<span class="clan-chip-name">HW Esports</span></div>
-        <div class="clan-chip clan-chip-blue">🏔<span class="clan-chip-name">Hierarchy of W</span></div>
-        <div class="clan-chip clan-chip-blue">🇳🇴<span class="clan-chip-name">Robust Norge</span></div>
-        <div class="clan-chip clan-chip-blue">🎖<span class="clan-chip-name">ACM</span></div>
-        <div class="clan-chip clan-chip-blue">💪<span class="clan-chip-name">PAAK ARMY</span></div>
-        <div class="clan-chip clan-chip-blue">💀<span class="clan-chip-name">HOLLOW</span></div>
-        <div class="clan-chip clan-chip-blue">🤝<span class="clan-chip-name">HW Alliance</span></div>
-        <div class="clan-chip clan-chip-blue">✂<span class="clan-chip-name">Severance</span></div>
-        <div class="clan-chip clan-chip-blue">👥<span class="clan-chip-name">HW Community</span></div>
-        <div class="clan-chip clan-chip-blue">🌱<span class="clan-chip-name">Arcline Mini</span></div>
+      <div class="clans-roster" id="arcline-klaner-roster">
+        <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;">LASTER...</div>
       </div>
     </div>
 
@@ -886,58 +781,15 @@ footer {
           <div class="legend-item"><div class="legend-dot-inactive"></div> Deltok ikke</div>
         </div>
       </div>
-      <div class="stats-cards">
-        <div class="stat-card stat-card-red" onclick="openModal('Sunbath CWL')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Sunbath CWL</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Mesterliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-red">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 220</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-red">#3 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-red" onclick="openModal('Arctic Sunbath')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Arctic Sunbath</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester II</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-red">5W - 2T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 280</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-red">#1 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-red" onclick="openModal('Arctic Solstice')">
-          <span class="april-badge april-active">✓ April</span>
-          <div class="stat-card-header"><span class="stat-card-name">Arctic Solstice</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-red">4W - 3T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 230</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-red">#2 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-red inactive" onclick="openModal('Arctic CWL')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">Arctic CWL</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Stormester I</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-red">6W - 1T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 320</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-red">#1 i gruppen</span></div>
-        </div>
-        <div class="stat-card stat-card-red inactive" onclick="openModal('Solstice CWL')">
-          <span class="april-badge april-inactive">– Deltok ikke</span>
-          <div class="stat-card-header"><span class="stat-card-name">Solstice CWL</span><span class="stat-card-badge badge-cwl">CWL</span></div>
-          <div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">Krystalliga III</span></div>
-          <div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value stat-value-red">3W - 4T</span></div>
-          <div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 150</span></div>
-          <div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value stat-value-red">#3 i gruppen</span></div>
-        </div>
+      <div class="stats-cards" id="sunbath-stats-cards">
+        <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:2rem;">LASTER...</div>
       </div>
     </div>
 
     <!-- KLANER -->
     <div class="tab-content" id="sunbath-klaner">
-      <div class="clans-roster">
-        <div class="clan-chip clan-chip-red">🌅<span class="clan-chip-name">Arctic Sunbath</span></div>
-        <div class="clan-chip clan-chip-red">❄<span class="clan-chip-name">Arctic CWL</span></div>
-        <div class="clan-chip clan-chip-red">☀<span class="clan-chip-name">Sunbath CWL</span></div>
-        <div class="clan-chip clan-chip-red">🌙<span class="clan-chip-name">Arctic Solstice</span></div>
-        <div class="clan-chip clan-chip-red">⚡<span class="clan-chip-name">Solstice CWL</span></div>
+      <div class="clans-roster" id="sunbath-klaner-roster">
+        <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;">LASTER...</div>
       </div>
     </div>
 
@@ -1650,6 +1502,85 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 const SUPABASE_URL = 'https://xgkxarqkngoilpsxhqeg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
 
+
+async function loadKlanerFraSupabase() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/klaner?order=sortering.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+
+    const arclineRoster = document.getElementById('arcline-klaner-roster');
+    const sunbathRoster = document.getElementById('sunbath-klaner-roster');
+
+    const arcline = data.filter(k => k.allianse === 'arcline');
+    const sunbath = data.filter(k => k.allianse === 'sunbath');
+
+    if (arclineRoster && arcline.length) {
+      arclineRoster.innerHTML = arcline.map(k =>
+        '<div class="clan-chip clan-chip-blue">' + (k.emoji || '') +
+        '<span class="clan-chip-name">' + (k.navn || '') + '</span></div>'
+      ).join('');
+    }
+
+    if (sunbathRoster && sunbath.length) {
+      sunbathRoster.innerHTML = sunbath.map(k =>
+        '<div class="clan-chip clan-chip-red">' + (k.emoji || '') +
+        '<span class="clan-chip-name">' + (k.navn || '') + '</span></div>'
+      ).join('');
+    }
+  } catch(e) { console.log('Klaner error:', e); }
+}
+
+async function loadCWLStatsFraSupabase() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/cwl_stats?order=sortering.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+
+    const arcline = data.filter(k => k.allianse === 'arcline');
+    const sunbath = data.filter(k => k.allianse === 'sunbath');
+
+    function byggKort(klaner, farge) {
+      return klaner.map(k => {
+        const aktiv = k.aktiv_denne_maned;
+        const badgeKlasse = aktiv ? 'april-active' : 'april-inactive';
+        const badgeTekst = aktiv ? '✓ April' : '– Deltok ikke';
+        const kortKlasse = aktiv ? '' : ' inactive';
+        const valKlasse = farge === 'blue' ? 'stat-value-blue' : 'stat-value-red';
+        return '<div class="stat-card stat-card-' + farge + kortKlasse + '" onclick="openModal('' + k.klan_navn + '')">' +
+          '<span class="april-badge ' + badgeKlasse + '">' + badgeTekst + '</span>' +
+          '<div class="stat-card-header">' +
+            '<span class="stat-card-name">' + (k.klan_navn || '') + '</span>' +
+            '<span class="stat-card-badge badge-cwl">CWL</span>' +
+          '</div>' +
+          '<div class="stat-row"><span class="stat-label">Liga</span><span class="stat-value stat-value-gold">' + (k.liga || '—') + '</span></div>' +
+          '<div class="stat-row"><span class="stat-label">Sesongrekord</span><span class="stat-value ' + valKlasse + '">' + (k.rekord || '—') + '</span></div>' +
+          '<div class="stat-row"><span class="stat-label">Medaljer</span><span class="stat-value stat-value-gold">🏅 ' + (k.medaljer || '—') + '</span></div>' +
+          '<div class="stat-row"><span class="stat-label">Plassering</span><span class="stat-value ' + valKlasse + '">' + (k.plassering || '—') + '</span></div>' +
+        '</div>';
+      }).join('');
+    }
+
+    const arclineEl = document.getElementById('arcline-stats-cards');
+    const sunbathEl = document.getElementById('sunbath-stats-cards');
+
+    if (arclineEl && arcline.length) arclineEl.innerHTML = byggKort(arcline, 'blue');
+    if (sunbathEl && sunbath.length) sunbathEl.innerHTML = byggKort(sunbath, 'red');
+
+    // Oppdater måned-label
+    if (arcline.length && arcline[0].sesong) {
+      const months = {'01':'Januar','02':'Februar','03':'Mars','04':'April','05':'Mai','06':'Juni','07':'Juli','08':'August','09':'September','10':'Oktober','11':'November','12':'Desember'};
+      const parts = arcline[0].sesong.split('-');
+      const label = (months[parts[1]] || parts[1]) + ' ' + parts[0];
+      const el = document.getElementById('arcline-stats-maaned');
+      if (el) el.textContent = label;
+    }
+
+  } catch(e) { console.log('CWL stats error:', e); }
+}
+
 async function loadSupabaseNews() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/nyheter?order=dato.desc&limit=6', {
@@ -1676,6 +1607,8 @@ async function loadSupabaseNews() {
 }
 
 document.addEventListener('DOMContentLoaded', loadSupabaseNews);
+document.addEventListener('DOMContentLoaded', loadKlanerFraSupabase);
+document.addEventListener('DOMContentLoaded', loadCWLStatsFraSupabase);
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
