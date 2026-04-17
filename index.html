@@ -725,27 +725,11 @@ footer {
 
     <!-- NEWS TAB -->
     <div class="tab-content" id="arcline-news">
-      <div class="clan-news-grid">
-        <div class="clan-news-card clan-news-blue">
-          <div class="clan-news-tag tag-blue">⚔ Krig Update</div>
-          <div class="clan-news-title">Arcline leverer sterkt i CW!</div>
-          <div class="clan-news-body">Arcline er i storform og holder en imponerende seiersrekke i clan wars denne sesongen.</div>
-        </div>
-        <div class="clan-news-card clan-news-blue">
-          <div class="clan-news-tag tag-blue">🏆 CWL Rapport</div>
-          <div class="clan-news-title">HW Esports dominerer sin CWL-gruppe</div>
-          <div class="clan-news-body">Med 7 seire og kun 0 tap kom HW Esports på 8.plass totalt av alle CWL-klaner.</div>
-        </div>
-        
-        <div class="clan-news-card clan-news-blue">
-          <div class="clan-news-tag tag-blue">🎮 Strategi</div>
-          <div class="clan-news-title">Nye angrepstrategier for TH18</div>
-          <div class="clan-news-body">Arcline's coaching team har lagt ut nye guider for de sterkeste komboene mot TH18-baser. Tilgjengelig på Discord.</div>
-        </div>
+      <div class="clan-news-grid" id="arcline-news-grid">
+        <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:1rem;">LASTER...</div>
       </div>
     </div>
-</div>
-
+    </div>
   </div>
 </section>
 
@@ -837,36 +821,9 @@ footer {
 
 <!-- NEWS -->
 <div class="tab-content" id="sunbath-news">
-  <div class="clan-news-grid">
-    <div class="clan-news-card clan-news-red">
-      <div class="clan-news-tag tag-red">❄ CWL Topp</div>
-      <div class="clan-news-title">Arctic Sunbath rykket opp!</div>
-      <div class="clan-news-body">
-        Imponerende 6-1 i CWL-sesongen gjør at Arctic Sunbath vant gruppen sin.
-        Klanen er klar for Stormerster II neste måned.
-      </div>
-    </div>
-
-    <div class="clan-news-card clan-news-red">
-      <div class="clan-news-tag tag-red">🌅 Solstice Info</div>
-      <div class="clan-news-title">Arctic Solstice rydder opp!</div>
-      <div class="clan-news-body">
-        Etter mange glemte angrep sist CWL ble det gjennomført en stor opprydning,
-        og ruster opp til opprykk neste CWL
-      </div>
-    </div>
-
-    <div class="clan-news-card clan-news-red">
-      <div class="clan-news-tag tag-red">🏆 Turnering</div>
-      <div class="clan-news-title">Arctic Sunbath Intern Cup</div>
-      <div class="clan-news-body">
-        Det vil innen kort tid annonseres en intern turnering blant Arctic Sunbath-medlemmer
-      </div>
-    </div>
+  <div class="clan-news-grid" id="sunbath-news-grid">
+    <div style="color:rgba(255,215,0,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:1rem;">LASTER...</div>
   </div>
-</div>
-</div>
-
 </div>
 </section>
 
@@ -1504,6 +1461,39 @@ const SUPABASE_URL = 'https://xgkxarqkngoilpsxhqeg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
 
 
+
+async function loadKlanNyheter() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/nyheter?allianse=neq.alliance&order=sortering.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+
+    const arcline = data.filter(n => n.allianse === 'arcline');
+    const sunbath = data.filter(n => n.allianse === 'sunbath');
+
+    function byggKort(items, farge) {
+      if (!items.length) return '<div style="color:rgba(232,224,204,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:1rem;">Ingen nyheter ennå</div>';
+      return items.map(n => {
+        var dato = n.dato ? new Date(n.dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '';
+        return '<div class="clan-news-card clan-news-' + farge + '">' +
+          '<div class="clan-news-tag tag-' + farge + '">' + (n.tag || '') + '</div>' +
+          '<div class="clan-news-title">' + (n.tittel || '') + '</div>' +
+          '<div class="clan-news-body">' + (n.beskrivelse || '') + '</div>' +
+          (dato ? '<div style="font-size:0.8rem;color:rgba(255,215,0,0.4);margin-top:0.8rem;font-family:Cinzel,serif;">' + dato + '</div>' : '') +
+        '</div>';
+      }).join('');
+    }
+
+    const arclineEl = document.getElementById('arcline-news-grid');
+    const sunbathEl = document.getElementById('sunbath-news-grid');
+
+    if (arclineEl) arclineEl.innerHTML = byggKort(arcline, 'blue');
+    if (sunbathEl) sunbathEl.innerHTML = byggKort(sunbath, 'red');
+
+  } catch(e) { console.log('Klan-nyheter error:', e); }
+}
+
 async function loadKlanerFraSupabase() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/klaner?order=sortering.asc', {
@@ -1611,6 +1601,7 @@ async function loadSupabaseNews() {
 <script>
 document.addEventListener('DOMContentLoaded', loadSupabaseNews);
 document.addEventListener('DOMContentLoaded', loadKlanerFraSupabase);
+document.addEventListener('DOMContentLoaded', loadKlanNyheter);
 document.addEventListener('DOMContentLoaded', loadCWLStatsFraSupabase);
 document.addEventListener('DOMContentLoaded', function() {
 
