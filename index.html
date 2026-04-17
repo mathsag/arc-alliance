@@ -265,6 +265,20 @@ nav {
 .legend-dot-active { width: 8px; height: 8px; border-radius: 50%; background: #66DD66; }
 .legend-dot-inactive { width: 8px; height: 8px; border-radius: 50%; background: rgba(150,150,150,0.4); }
 
+.hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:0.4rem; }
+.hamburger span { display:block; width:24px; height:2px; background:var(--gold); border-radius:2px; transition:all 0.3s; }
+.hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+.mobile-nav { display:none; position:fixed; inset:0; z-index:90; background:rgba(0,0,0,0.97); backdrop-filter:blur(16px); flex-direction:column; align-items:center; justify-content:center; gap:2.5rem; }
+.mobile-nav.open { display:flex; }
+.mobile-nav a { color:var(--text-light); text-decoration:none; font-family:'Cinzel',serif; font-size:1.2rem; letter-spacing:3px; text-transform:uppercase; }
+.mobile-nav a:hover { color:var(--gold); }
+@media (max-width:768px) {
+  .nav-links { display:none !important; }
+  .hamburger { display:flex; }
+}
+  
 /* MODAL */
 .modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 1000;
@@ -570,14 +584,26 @@ footer {
 <!-- NAV -->
 <nav>
   <span class="nav-logo">⚔ Arc Alliance</span>
-  <ul class="nav-links">
-    <li><a href="#home">Hjem</a></li>
-    <li><a href="#nyheter">Nyheter</a></li>
-    <li><a href="#arcline">Arcline</a></li>
-    <li><a href="#sunbath">Arctic Sunbath</a></li>
-  </ul>
+<ul class="nav-links">
+  <li><a href="#home">Hjem</a></li>
+  <li><a href="#nyheter">Nyheter</a></li>
+  <li><a href="#arcline">Arcline</a></li>
+  <li><a href="#sunbath">Arctic Sunbath</a></li>
+  <li><a href="https://discord.gg/arc-alliance" target="_blank" style="color:#7289DA;border:1px solid rgba(114,137,218,0.5);padding:0.35rem 0.9rem;border-radius:2px;">Discord</a></li>
+</ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Meny">
+  <span></span><span></span><span></span>
+</button>
 </nav>
 
+<div class="mobile-nav" id="mobileNav">
+  <a href="#home" onclick="closeMobileNav()">Hjem</a>
+  <a href="#nyheter" onclick="closeMobileNav()">Nyheter</a>
+  <a href="#arcline" onclick="closeMobileNav()">Arcline</a>
+  <a href="#sunbath" onclick="closeMobileNav()">Arctic Sunbath</a>
+  <a href="https://discord.gg/arc-alliance" target="_blank" style="color:#7289DA;">Discord</a>
+</div>
+  
 <!-- HERO SPLIT -->
 <section class="hero" id="home">
   <div class="hero-half hero-half-blue" id="arcline-hero">
@@ -622,6 +648,7 @@ footer {
   </div>
 
   <div class="news-grid">
+    <div id="supabase-news-loading" style="text-align:center;color:rgba(255,215,0,0.4);font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:2px;padding:2rem;grid-column:1/-1;">LASTER NYHETER...</div>
     <div class="news-card">
       <div class="news-tag">🏆 Turnering</div>
       <div class="news-title">Alliance Cup</div>
@@ -1508,7 +1535,16 @@ function closeModal() {
 function closeModalOutside(e) {
   if (e.target === document.getElementById('statModal')) closeModal();
 }
-
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+  document.body.style.overflow = document.getElementById('mobileNav').classList.contains('open') ? 'hidden' : '';
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 </script>
 
@@ -1610,7 +1646,36 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
   .events-table td:nth-child(4) { display: none; }
 }
 </style>
+// Supabase config
+const SUPABASE_URL = 'https://xgkxarqkngoilpsxhqeg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
 
+async function loadSupabaseNews() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/nyheter?order=dato.desc&limit=6', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+    const grid = document.querySelector('.news-grid');
+    const loader = document.getElementById('supabase-news-loading');
+    if (loader) loader.remove();
+    if (!data || !data.length) return;
+    // Fjern eksisterende hardkodede kort (behold kun Discord-kortet)
+    grid.querySelectorAll('.news-card:not(#discord-news-card)').forEach(c => c.remove());
+    data.forEach(function(n) {
+      var card = document.createElement('div');
+      card.className = 'news-card';
+      card.innerHTML =
+        '<div class="news-tag">' + (n.tag || '📢 Nyhet') + '</div>' +
+        '<div class="news-title">' + (n.tittel || '') + '</div>' +
+        '<div class="news-body">' + (n.innhold || '') + '</div>' +
+        '<div class="news-date">' + (n.dato ? new Date(n.dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '') + '</div>';
+      grid.insertBefore(card, grid.firstChild);
+    });
+  } catch(e) { console.log('Supabase news error:', e); }
+}
+
+document.addEventListener('DOMContentLoaded', loadSupabaseNews);
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
