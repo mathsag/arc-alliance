@@ -1550,7 +1550,7 @@ async function loadCWLStatsFraSupabase() {
         const badgeTekst = aktiv ? '✓ April' : '– Deltok ikke';
         const kortKlasse = aktiv ? '' : ' inactive';
         const valKlasse = farge === 'blue' ? 'stat-value-blue' : 'stat-value-red';
-        return '<div class="stat-card stat-card-' + farge + kortKlasse + '" onclick="openModal('' + k.klan_navn + '')">' +
+        return '<div class="stat-card stat-card-' + farge + kortKlasse + '" onclick="openModal(\'' + k.klan_navn + '\')">' +
           '<span class="april-badge ' + badgeKlasse + '">' + badgeTekst + '</span>' +
           '<div class="stat-card-header">' +
             '<span class="stat-card-name">' + (k.klan_navn || '') + '</span>' +
