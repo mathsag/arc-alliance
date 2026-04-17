@@ -713,7 +713,7 @@ footer {
     <div class="tab-content" id="arcline-events">
       <div class="events-table-wrapper"><table class="events-table">
         <thead><tr><th>Arrangement</th><th>Type</th><th>Dato</th><th>Status</th></tr></thead>
-        <tbody>
+        <tbody id="arcline-events-body">
           <tr><td>King of the Hill</td><td><span class="event-type event-koth">KOTH</span></td><td>Kommer snart</td><td style="color:#FFD700">Kommende</td></tr>
           <tr><td>CWL Sesong Mai</td><td><span class="event-type event-cwl">CWL</span></td><td>1. Mai</td><td style="color:#FFD700">Kommende</td></tr>
           <tr><td>Alliance Cup</td><td><span class="event-type event-tournament">Turnering</span></td><td>Kommer snart</td><td style="color:#FFD700">Kommende</td></tr>
@@ -789,7 +789,7 @@ footer {
           <th>Status</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="sunbath-events-body">
         <tr>
           <td>King of the Hill</td>
           <td><span class="event-type event-koth">KOTH</span></td>
@@ -1529,6 +1529,44 @@ async function loadInfoFraSupabase() {
   } catch(e) { console.log('Info error:', e); }
 }
 
+
+async function loadArrangementerFraSupabase() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/arrangementer?order=sortering.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+
+    const arcline = data.filter(a => a.allianse === 'arcline');
+    const sunbath = data.filter(a => a.allianse === 'sunbath');
+
+    const typeMap = {
+      'KOTH': '<span class="event-type event-koth">KOTH</span>',
+      'CWL': '<span class="event-type event-cwl">CWL</span>',
+      'Turnering': '<span class="event-type event-tournament">Turnering</span>',
+      'Krig': '<span class="event-type event-war">Krig</span>',
+      'Info': '<span class="event-type event-cwl">Info</span>',
+    };
+
+    function byggRader(items) {
+      if (!items.length) return '<tr><td colspan="4" style="text-align:center;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;font-size:0.75rem;padding:1.5rem;letter-spacing:2px;">Ingen arrangementer</td></tr>';
+      return items.map(function(e) {
+        var dato = e.dato ? new Date(e.dato).toLocaleDateString('nb-NO', {day:'numeric', month:'long'}) : 'Kommer snart';
+        var type = typeMap[e.type] || '<span class="event-type">' + (e.type || '') + '</span>';
+        var color = e.status === 'Avsluttet' ? 'rgba(200,200,200,0.4)' : '#FFD700';
+        return '<tr><td>' + (e.navn || '') + '</td><td>' + type + '</td><td>' + dato + '</td><td style="color:' + color + '">' + (e.status || '') + '</td></tr>';
+      }).join('');
+    }
+
+    const arclineEl = document.getElementById('arcline-events-body');
+    const sunbathEl = document.getElementById('sunbath-events-body');
+
+    if (arclineEl) arclineEl.innerHTML = byggRader(arcline);
+    if (sunbathEl) sunbathEl.innerHTML = byggRader(sunbath);
+
+  } catch(e) { console.log('Arrangementer error:', e); }
+}
+
 async function loadKlanerFraSupabase() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/klaner?order=sortering.asc', {
@@ -1638,6 +1676,7 @@ document.addEventListener('DOMContentLoaded', loadSupabaseNews);
 document.addEventListener('DOMContentLoaded', loadKlanerFraSupabase);
 document.addEventListener('DOMContentLoaded', loadKlanNyheter);
 document.addEventListener('DOMContentLoaded', loadInfoFraSupabase);
+document.addEventListener('DOMContentLoaded', loadArrangementerFraSupabase);
 document.addEventListener('DOMContentLoaded', loadCWLStatsFraSupabase);
 document.addEventListener('DOMContentLoaded', function() {
 
