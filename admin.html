@@ -211,10 +211,60 @@ tbody tr:last-child td { border-bottom:none; }
 }
 
 .mob-menu-btn { display: none; }
+@media (max-width: 768px) { .mob-menu-btn { display: flex !important; } }
+
+
+/* ── LOGIN ── */
+.login-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+}
+.login-box {
+  background: var(--dark2);
+  border: 1px solid rgba(255,215,0,0.2);
+  padding: 2.5rem 2rem;
+  width: 100%; max-width: 360px;
+  animation: popIn 0.25s ease;
+}
+.login-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem; color: var(--gold);
+  text-align: center; margin-bottom: 0.3rem;
+  text-shadow: 0 0 20px rgba(255,215,0,0.3);
+}
+.login-sub {
+  font-family: 'Cinzel', serif; font-size: 0.55rem;
+  letter-spacing: 3px; color: var(--text-faint);
+  text-align: center; margin-bottom: 2rem; text-transform: uppercase;
+}
+.login-err {
+  font-family: 'Cinzel', serif; font-size: 0.65rem;
+  color: var(--danger); text-align: center;
+  margin-bottom: 1rem; min-height: 1rem;
+}
 
 </style>
 </head>
 <body>
+
+
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-title">⚔ Arc Alliance</div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="login-err" id="login-err"></div>
+    <div class="fg" style="margin-bottom:0.8rem;">
+      <label class="flbl">E-post</label>
+      <input class="finp" id="login-email" type="email" placeholder="din@epost.no">
+    </div>
+    <div class="fg" style="margin-bottom:1.2rem;">
+      <label class="flbl">Passord</label>
+      <input class="finp" id="login-pass" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-g" style="width:100%;justify-content:center;" onclick="doLogin()">Logg inn →</button>
+  </div>
+</div>
 
 <aside class="sidebar">
   <div class="sidebar-logo">
@@ -634,6 +684,44 @@ function e(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace
 function J(r){return JSON.stringify(r).replace(/'/g,"&#39;").replace(/\n/g,'\\n');}
 
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+
+  try {
+    const r = await fetch(SB + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await r.json();
+    if (data.access_token) {
+      document.getElementById('login-screen').style.display = 'none';
+      sessionStorage.setItem('arc_token', data.access_token);
+    } else {
+      errEl.textContent = 'Feil e-post eller passord';
+    }
+  } catch(e) {
+    errEl.textContent = 'Innlogging feilet';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const token = sessionStorage.getItem('arc_token');
+  if (token) {
+    document.getElementById('login-screen').style.display = 'none';
+  }
+});
+
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+    doLogin();
+  }
+});
+
 
 function toggleMobNav(){
   const nav = document.querySelector('.sidebar-nav');
