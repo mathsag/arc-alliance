@@ -151,6 +151,67 @@ tbody tr:last-child td { border-bottom:none; }
 @keyframes slideUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
 
 .note { font-size:0.8rem; color:var(--text-faint); margin-bottom:0.9rem; }
+
+/* ── MOBIL ── */
+@media (max-width: 768px) {
+  body { flex-direction: column; overflow: auto; }
+
+  .sidebar {
+    width: 100%; height: auto; position: relative;
+    flex-direction: row; flex-wrap: wrap;
+    border-right: none; border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo { padding: 0.8rem 1rem; border-bottom: none; flex: 1; }
+  .sidebar-logo-title { font-size: 0.75rem; }
+  .sidebar-logo-sub { display: none; }
+
+  .sidebar-nav {
+    display: none; width: 100%;
+    border-top: 1px solid var(--border);
+    padding: 0.5rem 0;
+  }
+  .sidebar-nav.mob-open { display: block; }
+
+  .mob-menu-btn {
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: 1px solid rgba(255,215,0,0.25);
+    color: var(--gold); font-size: 1.2rem;
+    width: 38px; height: 38px; cursor: pointer;
+    margin: 0.7rem 1rem 0.7rem auto;
+  }
+
+  .nav-item { padding: 0.6rem 1.2rem 0.6rem 1.5rem; font-size: 0.75rem; }
+
+  .main { overflow: auto; height: auto; }
+  .workspace { flex-direction: column; overflow: visible; }
+  .admin-area { overflow: visible; padding: 1rem; }
+
+  .topbar { padding: 0.7rem 1rem; }
+  .topbar-title { font-size: 0.75rem; }
+  .topbar-sub { display: none; }
+  #pv-btn { font-size: 0.55rem; padding: 0.4rem 0.7rem; }
+
+  .stats-row { grid-template-columns: repeat(2,1fr); gap: 0.6rem; }
+  .sbox-val { font-size: 1.3rem; }
+
+  .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 500px; }
+  thead th { font-size: 0.5rem; padding: 0.55rem 0.6rem; }
+  tbody td { font-size: 0.8rem; padding: 0.55rem 0.6rem; }
+
+  .mbox { max-width: 100%; max-height: 95vh; margin: 0.5rem; width: calc(100vw - 1rem); }
+  .mbody { padding: 1rem; }
+  .fgrid { grid-template-columns: 1fr; }
+  .fg.sp { grid-column: 1; }
+  .finp, .fsel, .ftxt { font-size: 1rem; padding: 0.6rem 0.7rem; }
+  .factions { flex-direction: column; gap: 0.5rem; }
+  .factions .btn { width: 100%; justify-content: center; }
+
+  .preview-pane { display: none; }
+}
+
+.mob-menu-btn { display: none; }
+
 </style>
 </head>
 <body>
@@ -160,22 +221,23 @@ tbody tr:last-child td { border-bottom:none; }
     <div class="sidebar-logo-title">⚔ Arc Alliance</div>
     <div class="sidebar-logo-sub">Admin Panel</div>
   </div>
+  <button class="mob-menu-btn" onclick="toggleMobNav()" id="mob-btn">☰</button>
   <nav class="sidebar-nav">
     <div class="nav-section"><div class="nav-dot al"></div><span class="nav-lbl">Oversikt</span></div>
-    <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="goMob('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
     <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot al"></div><span class="nav-lbl">Alliance</span></div>
-    <div class="nav-item" id="nav-al-nyheter" onclick="go('al-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
-    <div class="nav-item" id="nav-info" onclick="go('info')"><span class="nav-icon">⚙️</span> Innstillinger</div>
+    <div class="nav-item" id="nav-al-nyheter" onclick="goMob('al-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item" id="nav-info" onclick="goMob('info')"><span class="nav-icon">⚙️</span> Innstillinger</div>
     <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot ar"></div><span class="nav-lbl ar">Arcline</span></div>
-    <div class="nav-item a" id="nav-ar-nyheter" onclick="go('ar-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
-    <div class="nav-item a" id="nav-ar-klaner" onclick="go('ar-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
-    <div class="nav-item a" id="nav-ar-arr" onclick="go('ar-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
-    <div class="nav-item a" id="nav-ar-cwl" onclick="go('ar-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
+    <div class="nav-item a" id="nav-ar-nyheter" onclick="goMob('ar-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item a" id="nav-ar-klaner" onclick="goMob('ar-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
+    <div class="nav-item a" id="nav-ar-arr" onclick="goMob('ar-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
+    <div class="nav-item a" id="nav-ar-cwl" onclick="goMob('ar-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
     <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot sb"></div><span class="nav-lbl sb">Arctic Sunbath</span></div>
-    <div class="nav-item s" id="nav-sb-nyheter" onclick="go('sb-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
-    <div class="nav-item s" id="nav-sb-klaner" onclick="go('sb-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
-    <div class="nav-item s" id="nav-sb-arr" onclick="go('sb-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
-    <div class="nav-item s" id="nav-sb-cwl" onclick="go('sb-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
+    <div class="nav-item s" id="nav-sb-nyheter" onclick="goMob('sb-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item s" id="nav-sb-klaner" onclick="goMob('sb-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
+    <div class="nav-item s" id="nav-sb-arr" onclick="goMob('sb-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
+    <div class="nav-item s" id="nav-sb-cwl" onclick="goMob('sb-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
   </nav>
 </aside>
 
@@ -572,6 +634,21 @@ function e(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace
 function J(r){return JSON.stringify(r).replace(/'/g,"&#39;").replace(/\n/g,'\\n');}
 
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
+
+function toggleMobNav(){
+  const nav = document.querySelector('.sidebar-nav');
+  const btn = document.getElementById('mob-btn');
+  nav.classList.toggle('mob-open');
+  btn.textContent = nav.classList.contains('mob-open') ? '✕' : '☰';
+}
+
+function goMob(name){
+  go(name);
+  const nav = document.querySelector('.sidebar-nav');
+  const btn = document.getElementById('mob-btn');
+  nav.classList.remove('mob-open');
+  btn.textContent = '☰';
+}
 loadDashboard();
 </script>
 </body>
