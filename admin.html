@@ -121,7 +121,13 @@ tbody tr:last-child td { border-bottom:none; }
 /* modal */
 .mbg { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.82); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:1rem; }
 .mbg.open { display:flex; }
-.mbox { background:var(--dark2); border:1px solid rgba(255,215,0,0.18); width:100%; max-width:520px; max-height:90vh; overflow-y:auto; animation:popIn 0.22s ease; }
+.mbox { background:var(--dark2); border:1px solid rgba(255,215,0,0.18); width:100%; max-width:960px; max-height:90vh; overflow-y:auto; animation:popIn 0.22s ease; }
+.mbox-inner { display:flex; gap:0; }
+.mform-side { flex:1; min-width:0; padding:1.3rem; border-right:1px solid var(--border); }
+.mprev-side { width:320px; flex-shrink:0; padding:1.3rem; background:var(--dark3); display:flex; flex-direction:column; gap:0.8rem; }
+.mprev-label { font-family:Cinzel,serif; font-size:0.55rem; letter-spacing:3px; text-transform:uppercase; color:var(--text-faint); margin-bottom:0.5rem; }
+.mprev-content { flex:1; }
+@media(max-width:768px){ .mbox-inner{flex-direction:column;} .mprev-side{width:100%;border-right:none;border-top:1px solid var(--border);} }
 .mbox.mar { border-color:rgba(204,34,34,0.3); }
 .mbox.msb { border-color:rgba(74,144,217,0.3); }
 @keyframes popIn { from{opacity:0;transform:translateY(14px) scale(0.97);}to{opacity:1;transform:none;} }
@@ -414,7 +420,7 @@ tbody tr:last-child td { border-bottom:none; }
       <div class="mhead-title" id="mtitle">Rediger</div>
       <button class="mclose" onclick="closeModal()">✕</button>
     </div>
-    <div class="mbody" id="mbody"></div>
+    <div class="mbox-inner"><div class="mform-side" id="mbody"></div><div class="mprev-side" id="mprev-side"><div class="mprev-label">👁 Forhåndsvisning</div><div class="mprev-content" id="mprev-content"></div></div></div>
   </div>
 </div>
 
@@ -594,6 +600,7 @@ function openModal(type,al,data=null){
   tc.className='mhead-title'+(al==='arcline'?' ar':al==='sunbath'?' sb':'');
   document.getElementById('mbody').innerHTML=buildForm(type,al,data||{});
   document.getElementById('mbg').classList.add('open');
+  bindPreviewListeners();
 }
 function closeModal(){document.getElementById('mbg').classList.remove('open');}
 function closeModalOut(e){if(e.target===document.getElementById('mbg'))closeModal();}
@@ -682,6 +689,96 @@ function abadge(a){
 }
 function e(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function J(r){return JSON.stringify(r).replace(/'/g,"&#39;").replace(/\n/g,'\\n');}
+
+
+function updatePreview() {
+  const type = _etype, al = _eal;
+  const el = document.getElementById('mprev-content');
+  if (!el) return;
+
+  if (type === 'nyhet') {
+    const tittel = document.getElementById('f-tittel')?.value || 'Tittel...';
+    const tag = document.getElementById('f-tag')?.value || '📢 Nyhet';
+    const beskrivelse = document.getElementById('f-beskrivelse')?.value || 'Beskrivelse...';
+    const dato = document.getElementById('f-dato')?.value || '';
+    const datoFmt = dato ? new Date(dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '';
+    const farge = al === 'arcline' ? 'blue' : al === 'sunbath' ? 'red' : '#FFD700';
+    const border = al === 'arcline' ? 'rgba(204,34,34,0.3)' : al === 'sunbath' ? 'rgba(74,144,217,0.3)' : 'rgba(255,215,0,0.2)';
+    el.innerHTML = `<div style="background:var(--dark2);border:1px solid ${border};padding:1.2rem;border-radius:2px;">
+      <div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">${tag}</div>
+      <div style="font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--text);margin-bottom:0.6rem;">${tittel}</div>
+      <div style="font-size:0.88rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.8rem;">${beskrivelse}</div>
+      ${datoFmt ? `<div style="font-size:0.75rem;color:var(--text-faint);font-family:Cinzel,serif;">${datoFmt}</div>` : ''}
+    </div>`;
+
+  } else if (type === 'klan') {
+    const navn = document.getElementById('f-navn')?.value || 'Klan-navn';
+    const emoji = document.getElementById('f-emoji')?.value || '⚔';
+    const chipFarge = al === 'arcline' ? 'rgba(74,144,217,0.15)' : 'rgba(255,100,100,0.15)';
+    const chipBorder = al === 'arcline' ? 'rgba(74,144,217,0.3)' : 'rgba(204,34,34,0.3)';
+    el.innerHTML = `<div style="display:inline-flex;align-items:center;gap:0.6rem;background:${chipFarge};border:1px solid ${chipBorder};padding:0.5rem 1rem;font-family:Cinzel,serif;font-size:0.8rem;color:var(--text);">
+      <span style="font-size:1.1rem;">${emoji}</span>
+      <span>${navn}</span>
+    </div>`;
+
+  } else if (type === 'arr') {
+    const navn = document.getElementById('f-navn')?.value || 'Arrangement';
+    const type2 = document.getElementById('f-type')?.value || 'KOTH';
+    const dato = document.getElementById('f-dato')?.value || '';
+    const status = document.getElementById('f-status')?.value || 'Kommende';
+    const datoFmt = dato ? new Date(dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long'}) : 'Kommer snart';
+    const statusFarge = status === 'Avsluttet' ? 'rgba(200,200,200,0.4)' : '#FFD700';
+    el.innerHTML = `<div style="background:var(--dark2);border:1px solid var(--border);overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+          <td style="padding:0.6rem 0.8rem;font-weight:500;">${navn}</td>
+          <td style="padding:0.6rem 0.8rem;font-family:Cinzel,serif;font-size:0.65rem;color:var(--gold);">${type2}</td>
+          <td style="padding:0.6rem 0.8rem;color:var(--text-faint);font-size:0.8rem;">${datoFmt}</td>
+          <td style="padding:0.6rem 0.8rem;color:${statusFarge};font-size:0.8rem;">${status}</td>
+        </tr>
+      </table>
+    </div>`;
+
+  } else if (type === 'cwl') {
+    const klan = document.getElementById('f-klan')?.value || 'Klan-navn';
+    const liga = document.getElementById('f-liga')?.value || 'Liga';
+    const rekord = document.getElementById('f-rekord')?.value || '—';
+    const medaljer = document.getElementById('f-medaljer')?.value || '—';
+    const plassering = document.getElementById('f-plass')?.value || '—';
+    const aktiv = document.getElementById('f-aktiv')?.value === 'true';
+    const kortFarge = al === 'arcline' ? 'rgba(74,144,217,0.08)' : 'rgba(255,100,100,0.08)';
+    const valFarge = al === 'arcline' ? '#7EC8FF' : '#FF7777';
+    el.innerHTML = `<div style="background:${kortFarge};border:1px solid var(--border);padding:1.1rem;position:relative;">
+      <div style="position:absolute;top:0.6rem;right:0.6rem;font-family:Cinzel,serif;font-size:0.5rem;padding:0.15rem 0.5rem;border:1px solid;${aktiv?'color:#4caf7d;border-color:rgba(76,175,125,0.3);':'color:rgba(200,200,200,0.4);border-color:rgba(150,150,150,0.2);'}">${aktiv?'✓ Aktiv':'– Deltok ikke'}</div>
+      <div style="font-family:Cinzel,serif;font-size:0.9rem;color:var(--text);margin-bottom:0.8rem;">${klan}</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.82rem;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-dim);">Liga</span><span style="color:var(--gold);font-family:Cinzel,serif;">${liga}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-dim);">Rekord</span><span style="color:${valFarge};">${rekord}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-dim);">Medaljer</span><span style="color:var(--gold);">🏅 ${medaljer}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-dim);">Plassering</span><span style="color:${valFarge};">${plassering}</span></div>
+      </div>
+    </div>`;
+
+  } else if (type === 'info') {
+    const nokkel = document.getElementById('f-nokkel')?.value || 'nokkel';
+    const verdi = document.getElementById('f-verdi')?.value || 'verdi';
+    el.innerHTML = `<div style="background:var(--dark2);border:1px solid var(--border);padding:1rem;">
+      <div style="font-family:Cinzel,serif;font-size:0.65rem;color:var(--gold);margin-bottom:0.5rem;">${nokkel}</div>
+      <div style="font-size:0.88rem;color:var(--text-dim);">${verdi}</div>
+    </div>`;
+  }
+}
+
+// Legg til live-oppdatering på alle input-felter i modal
+function bindPreviewListeners() {
+  setTimeout(() => {
+    document.querySelectorAll('#mbody input, #mbody textarea, #mbody select').forEach(el => {
+      el.addEventListener('input', updatePreview);
+      el.addEventListener('change', updatePreview);
+    });
+    updatePreview();
+  }, 50);
+}
 
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
 
