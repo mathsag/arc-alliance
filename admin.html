@@ -349,6 +349,15 @@ tbody tr:last-child td { border-bottom:none; }
       <!-- INFO -->
       <div class="panel" id="panel-info">
         <div class="sec-head"><div class="sec-title">⚙️ Innstillinger</div><button class="btn btn-g" onclick="openModal('info',null)">+ Ny nøkkel</button></div>
+      <div style="background:var(--dark3);border:1px solid var(--border);padding:1.2rem;margin-bottom:1.3rem;">
+        <div style="font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:2px;color:var(--gold);margin-bottom:1rem;">🔑 ENDRE PASSORD</div>
+        <div class="fgrid" style="grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
+          <div class="fg"><label class="flbl">Nytt passord</label><input class="finp" id="new-pass" type="password" placeholder="Nytt passord"></div>
+          <div class="fg"><label class="flbl">Bekreft passord</label><input class="finp" id="confirm-pass" type="password" placeholder="Bekreft passord"></div>
+        </div>
+        <div id="pass-msg" style="font-family:Cinzel,serif;font-size:0.62rem;margin-bottom:0.6rem;min-height:1rem;"></div>
+        <button class="btn btn-g" onclick="endrePassord()">💾 Oppdater passord</button>
+      </div>
         <div class="twrap"><table><thead><tr><th>Nøkkel</th><th>Verdi</th><th>Oppdatert</th><th></th></tr></thead><tbody id="tbl-info"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody></table></div>
       </div>
 
@@ -825,6 +834,49 @@ document.addEventListener('keydown', ev => {
   }
 });
 
+
+
+async function endrePassord() {
+  const nytt = document.getElementById('new-pass').value;
+  const bekreft = document.getElementById('confirm-pass').value;
+  const msg = document.getElementById('pass-msg');
+
+  if (!nytt || nytt.length < 6) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Passordet må være minst 6 tegn';
+    return;
+  }
+  if (nytt !== bekreft) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Passordene stemmer ikke overens';
+    return;
+  }
+
+  try {
+    const token = sessionStorage.getItem('arc_token');
+    const r = await fetch(SB + '/auth/v1/user', {
+      method: 'PUT',
+      headers: {
+        'apikey': KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password: nytt })
+    });
+    if (r.ok) {
+      msg.style.color = 'var(--success)';
+      msg.textContent = '✓ Passord oppdatert!';
+      document.getElementById('new-pass').value = '';
+      document.getElementById('confirm-pass').value = '';
+    } else {
+      msg.style.color = 'var(--danger)';
+      msg.textContent = 'Feil ved oppdatering';
+    }
+  } catch(e) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Noe gikk galt';
+  }
+}
 
 function loggUt(){
   sessionStorage.removeItem('arc_token');
