@@ -7,132 +7,111 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
 :root {
-  --gold: #FFD700;
-  --gold-dark: #B8860B;
-  --gold-dim: rgba(255,215,0,0.12);
-  --dark: #08080d;
-  --dark2: #0d0d18;
-  --dark3: #12121e;
-  --text: #e8e0cc;
-  --text-dim: rgba(232,224,204,0.55);
-  --text-faint: rgba(232,224,204,0.25);
-  --arcline: #CC2222;
-  --arcline-dim: rgba(204,34,34,0.15);
-  --sunbath: #4A90D9;
-  --sunbath-dim: rgba(74,144,217,0.15);
-  --success: #4caf7d;
-  --danger: #e05252;
-  --border: rgba(255,215,0,0.1);
-  --sidebar-w: 220px;
+  --gold: #FFD700; --gold-dark: #B8860B; --gold-dim: rgba(255,215,0,0.12);
+  --dark: #08080d; --dark2: #0d0d18; --dark3: #12121e;
+  --text: #e8e0cc; --text-dim: rgba(232,224,204,0.55); --text-faint: rgba(232,224,204,0.25);
+  --arcline: #CC2222; --arcline-dim: rgba(204,34,34,0.15);
+  --sunbath: #4A90D9; --sunbath-dim: rgba(74,144,217,0.15);
+  --success: #4caf7d; --danger: #e05252;
+  --border: rgba(255,215,0,0.1); --sidebar-w: 210px;
 }
+html,body { height:100%; }
+body { background:var(--dark); color:var(--text); font-family:'Crimson Pro',serif; display:flex; overflow:hidden; }
 
-html { scroll-behavior: smooth; }
-body { background: var(--dark); color: var(--text); font-family: 'Crimson Pro', serif; min-height: 100vh; display: flex; overflow-x: hidden; }
+/* SIDEBAR */
+.sidebar { width:var(--sidebar-w); height:100vh; background:var(--dark2); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow-y:auto; }
+.sidebar-logo { padding:1.4rem 1.2rem 1rem; border-bottom:1px solid var(--border); }
+.sidebar-logo-title { font-family:'Cinzel Decorative',serif; font-size:0.85rem; color:var(--gold); letter-spacing:1px; text-shadow:0 0 20px rgba(255,215,0,0.25); }
+.sidebar-logo-sub { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:3px; color:var(--text-faint); margin-top:0.3rem; text-transform:uppercase; }
+.sidebar-nav { flex:1; padding:0.5rem 0; }
+.nav-section { padding:0.9rem 1.2rem 0.25rem; display:flex; align-items:center; gap:0.45rem; }
+.nav-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.nav-dot.al { background:var(--gold); box-shadow:0 0 5px rgba(255,215,0,0.5); }
+.nav-dot.ar { background:var(--arcline); box-shadow:0 0 5px rgba(204,34,34,0.5); }
+.nav-dot.sb { background:var(--sunbath); box-shadow:0 0 5px rgba(74,144,217,0.5); }
+.nav-lbl { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); }
+.nav-lbl.ar { color:rgba(204,34,34,0.55); }
+.nav-lbl.sb { color:rgba(74,144,217,0.55); }
+.nav-item { display:flex; align-items:center; gap:0.55rem; padding:0.48rem 1.2rem 0.48rem 1.7rem; cursor:pointer; font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.5px; color:var(--text-dim); border-left:2px solid transparent; transition:all 0.18s; user-select:none; }
+.nav-item:hover { color:var(--text); background:rgba(255,215,0,0.03); }
+.nav-item.active { color:var(--gold); border-left-color:var(--gold); background:rgba(255,215,0,0.05); }
+.nav-item.active.a { color:#FF7777; border-left-color:var(--arcline); background:rgba(204,34,34,0.06); }
+.nav-item.active.s { color:#7EC8FF; border-left-color:var(--sunbath); background:rgba(74,144,217,0.06); }
+.nav-icon { font-size:0.82rem; min-width:0.95rem; }
+.sidebar-footer { padding:0.9rem 1.2rem; border-top:1px solid var(--border); }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: var(--sidebar-w); min-height: 100vh;
-  background: var(--dark2); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  position: fixed; top: 0; left: 0; z-index: 100; overflow-y: auto;
-}
-.sidebar-logo { padding: 1.6rem 1.3rem 1.1rem; border-bottom: 1px solid var(--border); }
-.sidebar-logo-title { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; color: var(--gold); letter-spacing: 1px; text-shadow: 0 0 20px rgba(255,215,0,0.25); }
-.sidebar-logo-sub { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 3px; color: var(--text-faint); margin-top: 0.3rem; text-transform: uppercase; }
+/* MAIN AREA = admin + preview side by side */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
-.sidebar-nav { flex: 1; padding: 0.6rem 0 1rem; }
+.topbar { padding:0.85rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--dark2); flex-shrink:0; }
+.topbar-left { display:flex; align-items:center; gap:0.7rem; }
+.topbar-bar { width:3px; height:24px; border-radius:2px; flex-shrink:0; background:var(--gold); }
+.topbar-bar.ar { background:var(--arcline); box-shadow:0 0 8px rgba(204,34,34,0.5); }
+.topbar-bar.sb { background:var(--sunbath); box-shadow:0 0 8px rgba(74,144,217,0.5); }
+.topbar-title { font-family:'Cinzel',serif; font-size:0.82rem; letter-spacing:2px; }
+.topbar-sub { font-size:0.78rem; color:var(--text-faint); margin-top:0.1rem; }
+.topbar-right { display:flex; align-items:center; gap:0.6rem; }
 
-.nav-section { padding: 1rem 1.3rem 0.3rem; display: flex; align-items: center; gap: 0.5rem; }
-.nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.nav-dot.alliance { background: var(--gold); box-shadow: 0 0 6px rgba(255,215,0,0.5); }
-.nav-dot.arcline  { background: var(--arcline); box-shadow: 0 0 6px rgba(204,34,34,0.5); }
-.nav-dot.sunbath  { background: var(--sunbath); box-shadow: 0 0 6px rgba(74,144,217,0.5); }
-.nav-section-lbl { font-family: 'Cinzel', serif; font-size: 0.57rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-faint); }
-.nav-section-lbl.arcline { color: rgba(204,34,34,0.55); }
-.nav-section-lbl.sunbath { color: rgba(74,144,217,0.55); }
+/* WORKSPACE = content + preview */
+.workspace { flex:1; display:flex; overflow:hidden; }
 
-.nav-item {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.5rem 1.3rem 0.5rem 1.8rem;
-  cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.5px;
-  color: var(--text-dim); border-left: 2px solid transparent; transition: all 0.18s; user-select: none;
-}
-.nav-item:hover { color: var(--text); background: rgba(255,215,0,0.03); }
-.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(255,215,0,0.05); }
-.nav-item.active.a { color: #FF7777; border-left-color: var(--arcline); background: rgba(204,34,34,0.06); }
-.nav-item.active.s { color: #7EC8FF; border-left-color: var(--sunbath); background: rgba(74,144,217,0.06); }
-.nav-icon { font-size: 0.85rem; min-width: 1rem; }
+.admin-area { flex:1; overflow-y:auto; padding:1.5rem; }
 
-.sidebar-footer { padding: 1rem 1.3rem; border-top: 1px solid var(--border); }
-.preview-btn {
-  display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;
-  padding: 0.6rem; background: var(--gold-dim); border: 1px solid rgba(255,215,0,0.25);
-  color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 2px;
-  cursor: pointer; transition: all 0.2s;
-}
-.preview-btn:hover { background: rgba(255,215,0,0.18); }
-
-/* ── MAIN ── */
-.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-.topbar {
-  padding: 1rem 2rem; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--dark2); position: sticky; top: 0; z-index: 50;
-}
-.topbar-left { display: flex; align-items: center; gap: 0.8rem; }
-.topbar-bar { width: 3px; height: 26px; border-radius: 2px; flex-shrink: 0; background: var(--gold); }
-.topbar-bar.arcline { background: var(--arcline); box-shadow: 0 0 8px rgba(204,34,34,0.5); }
-.topbar-bar.sunbath { background: var(--sunbath); box-shadow: 0 0 8px rgba(74,144,217,0.5); }
-.topbar-title { font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 2px; }
-.topbar-sub { font-size: 0.8rem; color: var(--text-faint); margin-top: 0.1rem; }
-
-.content { padding: 1.8rem 2rem; flex: 1; }
+/* PREVIEW PANE */
+.preview-pane { width:0; border-left:1px solid var(--border); display:flex; flex-direction:column; transition:width 0.3s ease; overflow:hidden; flex-shrink:0; }
+.preview-pane.open { width:45%; }
+.preview-pane-top { padding:0.6rem 1rem; background:var(--dark2); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.preview-pane-top span { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:2px; color:var(--gold); }
+.preview-pane-refresh { background:none; border:1px solid rgba(255,215,0,0.2); color:var(--text-dim); font-size:0.75rem; width:24px; height:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.preview-pane-refresh:hover { color:var(--gold); border-color:rgba(255,215,0,0.4); }
+.preview-iframe { flex:1; border:none; width:100%; }
 
 /* panels */
-.panel { display: none; }
-.panel.active { display: block; }
+.panel { display:none; }
+.panel.active { display:block; }
 
-/* stats row */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
-.sbox { background: var(--dark3); border: 1px solid var(--border); padding: 1.1rem 1.3rem; position: relative; overflow: hidden; }
+/* stats */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:0.8rem; margin-bottom:1.5rem; }
+.sbox { background:var(--dark3); border:1px solid var(--border); padding:1rem 1.2rem; position:relative; overflow:hidden; }
 .sbox::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; background:linear-gradient(90deg,var(--gold-dark),var(--gold)); opacity:0.4; }
-.sbox-lbl { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:3px; text-transform:uppercase; color:var(--text-faint); margin-bottom:0.4rem; }
-.sbox-val { font-family:'Cinzel Decorative',serif; font-size:1.7rem; color:var(--gold); line-height:1; }
+.sbox-lbl { font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:3px; text-transform:uppercase; color:var(--text-faint); margin-bottom:0.35rem; }
+.sbox-val { font-family:'Cinzel Decorative',serif; font-size:1.6rem; color:var(--gold); line-height:1; }
 
-/* section header */
-.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.9rem; }
-.sec-title { font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
+/* section */
+.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.8rem; }
+.sec-title { font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
 .sec-title.ar { color:#FF7777; }
 .sec-title.sb { color:#7EC8FF; }
 
 /* table */
-.twrap { background:var(--dark3); border:1px solid var(--border); overflow:hidden; margin-bottom:1.5rem; }
-table { width:100%; border-collapse:collapse; }
-thead th { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); padding:0.72rem 0.9rem; text-align:left; border-bottom:1px solid var(--border); background:var(--dark2); white-space:nowrap; }
-tbody td { padding:0.68rem 0.9rem; font-size:0.88rem; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+.twrap { background:var(--dark3); border:1px solid var(--border); overflow:hidden; margin-bottom:1.3rem; overflow-x:auto; }
+table { width:100%; border-collapse:collapse; min-width:400px; }
+thead th { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); padding:0.65rem 0.8rem; text-align:left; border-bottom:1px solid var(--border); background:var(--dark2); white-space:nowrap; }
+tbody td { padding:0.62rem 0.8rem; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
 tbody tr:hover td { background:rgba(255,215,0,0.02); }
 tbody tr:last-child td { border-bottom:none; }
-.erow td { text-align:center; padding:2.5rem; color:var(--text-faint); font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:2px; }
+.erow td { text-align:center; padding:2rem; color:var(--text-faint); font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:2px; }
 
 /* buttons */
-.btn { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:1.5px; text-transform:uppercase; padding:0.5rem 1.1rem; border:1px solid; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; transition:all 0.18s; background:none; white-space:nowrap; }
+.btn { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; padding:0.45rem 1rem; border:1px solid; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; transition:all 0.18s; background:none; white-space:nowrap; }
 .btn-g  { border-color:rgba(255,215,0,0.35); color:var(--gold); }
 .btn-g:hover  { background:var(--gold-dim); border-color:var(--gold); }
 .btn-ar { border-color:rgba(204,34,34,0.35); color:#FF7777; }
 .btn-ar:hover { background:var(--arcline-dim); }
 .btn-sb { border-color:rgba(74,144,217,0.35); color:#7EC8FF; }
 .btn-sb:hover { background:var(--sunbath-dim); }
-.btn-del { border-color:rgba(224,82,82,0.22); color:var(--danger); font-size:0.57rem; padding:0.3rem 0.6rem; }
+.btn-del { border-color:rgba(224,82,82,0.22); color:var(--danger); font-size:0.54rem; padding:0.28rem 0.55rem; }
 .btn-del:hover { background:rgba(224,82,82,0.1); }
-.btn-ed  { border-color:rgba(255,215,0,0.13); color:var(--text-dim); font-size:0.57rem; padding:0.3rem 0.6rem; }
+.btn-ed  { border-color:rgba(255,215,0,0.13); color:var(--text-dim); font-size:0.54rem; padding:0.28rem 0.55rem; }
 .btn-ed:hover  { color:var(--gold); border-color:rgba(255,215,0,0.35); }
-.brow { display:flex; gap:0.35rem; }
+.btn-pv { border-color:rgba(255,215,0,0.25); color:var(--gold); font-size:0.58rem; padding:0.4rem 0.8rem; }
+.btn-pv:hover { background:var(--gold-dim); }
+.btn-pv.active { background:var(--gold-dim); border-color:var(--gold); }
+.brow { display:flex; gap:0.3rem; }
 
 /* badges */
-.badge { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:1px; padding:0.18rem 0.52rem; border-radius:2px; display:inline-block; white-space:nowrap; }
+.badge { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:1px; padding:0.16rem 0.5rem; border-radius:2px; display:inline-block; white-space:nowrap; }
 .badge-ar { background:rgba(204,34,34,0.15); color:#FF7777; border:1px solid rgba(204,34,34,0.3); }
 .badge-sb { background:rgba(74,144,217,0.15); color:#7EC8FF; border:1px solid rgba(74,144,217,0.3); }
 .badge-al { background:rgba(255,215,0,0.1); color:var(--gold); border:1px solid rgba(255,215,0,0.2); }
@@ -142,45 +121,36 @@ tbody tr:last-child td { border-bottom:none; }
 /* modal */
 .mbg { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.82); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:1rem; }
 .mbg.open { display:flex; }
-.mbox { background:var(--dark2); border:1px solid rgba(255,215,0,0.18); width:100%; max-width:540px; max-height:90vh; overflow-y:auto; animation:popIn 0.22s ease; }
+.mbox { background:var(--dark2); border:1px solid rgba(255,215,0,0.18); width:100%; max-width:520px; max-height:90vh; overflow-y:auto; animation:popIn 0.22s ease; }
 .mbox.mar { border-color:rgba(204,34,34,0.3); }
 .mbox.msb { border-color:rgba(74,144,217,0.3); }
 @keyframes popIn { from{opacity:0;transform:translateY(14px) scale(0.97);}to{opacity:1;transform:none;} }
-.mhead { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid var(--border); }
-.mhead-title { font-family:'Cinzel',serif; font-size:0.75rem; letter-spacing:2px; color:var(--gold); }
+.mhead { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.3rem; border-bottom:1px solid var(--border); }
+.mhead-title { font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:2px; color:var(--gold); }
 .mhead-title.ar { color:#FF7777; }
 .mhead-title.sb { color:#7EC8FF; }
-.mclose { background:none; border:1px solid rgba(255,215,0,0.15); color:var(--text-dim); width:26px;height:26px; cursor:pointer; font-size:0.8rem; display:flex;align-items:center;justify-content:center; transition:all 0.2s; }
+.mclose { background:none; border:1px solid rgba(255,215,0,0.15); color:var(--text-dim); width:25px;height:25px; cursor:pointer; font-size:0.78rem; display:flex;align-items:center;justify-content:center; transition:all 0.2s; }
 .mclose:hover { color:var(--gold); border-color:rgba(255,215,0,0.4); }
-.mbody { padding:1.4rem; }
+.mbody { padding:1.3rem; }
 
 /* form */
-.fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; }
-.fg { display:flex; flex-direction:column; gap:0.35rem; }
+.fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+.fg { display:flex; flex-direction:column; gap:0.32rem; }
 .fg.sp { grid-column:1/-1; }
-.flbl { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); }
-.finp,.fsel,.ftxt { background:var(--dark); border:1px solid rgba(255,215,0,0.13); color:var(--text); font-family:'Crimson Pro',serif; font-size:0.93rem; padding:0.55rem 0.75rem; outline:none; transition:border-color 0.2s; width:100%; }
+.flbl { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); }
+.finp,.fsel,.ftxt { background:var(--dark); border:1px solid rgba(255,215,0,0.13); color:var(--text); font-family:'Crimson Pro',serif; font-size:0.9rem; padding:0.5rem 0.7rem; outline:none; transition:border-color 0.2s; width:100%; }
 .finp:focus,.fsel:focus,.ftxt:focus { border-color:rgba(255,215,0,0.4); }
 .fsel option { background:var(--dark2); }
-.ftxt { resize:vertical; min-height:80px; }
-.factions { display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; padding-top:1rem; border-top:1px solid var(--border); }
+.ftxt { resize:vertical; min-height:75px; }
+.factions { display:flex; justify-content:flex-end; gap:0.55rem; margin-top:1.2rem; padding-top:0.9rem; border-top:1px solid var(--border); }
 
 /* toast */
-.toast { position:fixed; bottom:1.5rem;right:1.5rem; z-index:9999; background:var(--dark2); border:1px solid rgba(76,175,125,0.35); color:var(--success); font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:1px; padding:0.75rem 1.3rem; display:none; align-items:center; gap:0.5rem; }
+.toast { position:fixed; bottom:1.2rem;right:1.2rem; z-index:9999; background:var(--dark2); border:1px solid rgba(76,175,125,0.35); color:var(--success); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:1px; padding:0.7rem 1.2rem; display:none; align-items:center; gap:0.5rem; }
 .toast.err { border-color:rgba(224,82,82,0.35);color:var(--danger); }
 .toast.show { display:flex; animation:slideUp 0.25s ease; }
 @keyframes slideUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
 
-/* preview */
-.pvpanel { display:none; position:fixed; inset:0; z-index:500; background:var(--dark); flex-direction:column; }
-.pvpanel.open { display:flex; }
-.pvtop { display:flex; align-items:center; justify-content:space-between; padding:0.75rem 1.4rem; background:var(--dark2); border-bottom:1px solid var(--border); flex-shrink:0; }
-.pvtop span { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:2px; color:var(--gold); }
-.pvframe { flex:1; border:none; width:100%; }
-
-.note { font-size:0.82rem; color:var(--text-faint); margin-bottom:1rem; }
-
-@media(max-width:800px){ .sidebar{display:none;} .main{margin-left:0;} .stats-row{grid-template-columns:repeat(2,1fr);} }
+.note { font-size:0.8rem; color:var(--text-faint); margin-bottom:0.9rem; }
 </style>
 </head>
 <body>
@@ -191,64 +161,22 @@ tbody tr:last-child td { border-bottom:none; }
     <div class="sidebar-logo-sub">Admin Panel</div>
   </div>
   <nav class="sidebar-nav">
-
-    <div class="nav-section">
-      <div class="nav-dot alliance"></div>
-      <span class="nav-section-lbl">Oversikt</span>
-    </div>
-    <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')">
-      <span class="nav-icon">🏠</span> Dashboard
-    </div>
-
-    <div class="nav-section" style="margin-top:0.4rem;">
-      <div class="nav-dot alliance"></div>
-      <span class="nav-section-lbl">Alliance</span>
-    </div>
-    <div class="nav-item" id="nav-al-nyheter" onclick="go('al-nyheter')">
-      <span class="nav-icon">📰</span> Nyheter
-    </div>
-    <div class="nav-item" id="nav-info" onclick="go('info')">
-      <span class="nav-icon">⚙️</span> Innstillinger
-    </div>
-
-    <div class="nav-section" style="margin-top:0.4rem;">
-      <div class="nav-dot arcline"></div>
-      <span class="nav-section-lbl arcline">Arcline</span>
-    </div>
-    <div class="nav-item a" id="nav-ar-nyheter" onclick="go('ar-nyheter')">
-      <span class="nav-icon">📰</span> Nyheter
-    </div>
-    <div class="nav-item a" id="nav-ar-klaner" onclick="go('ar-klaner')">
-      <span class="nav-icon">🏰</span> Klaner
-    </div>
-    <div class="nav-item a" id="nav-ar-arr" onclick="go('ar-arr')">
-      <span class="nav-icon">📅</span> Arrangementer
-    </div>
-    <div class="nav-item a" id="nav-ar-cwl" onclick="go('ar-cwl')">
-      <span class="nav-icon">📊</span> CWL-statistikk
-    </div>
-
-    <div class="nav-section" style="margin-top:0.4rem;">
-      <div class="nav-dot sunbath"></div>
-      <span class="nav-section-lbl sunbath">Arctic Sunbath</span>
-    </div>
-    <div class="nav-item s" id="nav-sb-nyheter" onclick="go('sb-nyheter')">
-      <span class="nav-icon">📰</span> Nyheter
-    </div>
-    <div class="nav-item s" id="nav-sb-klaner" onclick="go('sb-klaner')">
-      <span class="nav-icon">🏰</span> Klaner
-    </div>
-    <div class="nav-item s" id="nav-sb-arr" onclick="go('sb-arr')">
-      <span class="nav-icon">📅</span> Arrangementer
-    </div>
-    <div class="nav-item s" id="nav-sb-cwl" onclick="go('sb-cwl')">
-      <span class="nav-icon">📊</span> CWL-statistikk
-    </div>
-
+    <div class="nav-section"><div class="nav-dot al"></div><span class="nav-lbl">Oversikt</span></div>
+    <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
+    <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot al"></div><span class="nav-lbl">Alliance</span></div>
+    <div class="nav-item" id="nav-al-nyheter" onclick="go('al-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item" id="nav-info" onclick="go('info')"><span class="nav-icon">⚙️</span> Innstillinger</div>
+    <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot ar"></div><span class="nav-lbl ar">Arcline</span></div>
+    <div class="nav-item a" id="nav-ar-nyheter" onclick="go('ar-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item a" id="nav-ar-klaner" onclick="go('ar-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
+    <div class="nav-item a" id="nav-ar-arr" onclick="go('ar-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
+    <div class="nav-item a" id="nav-ar-cwl" onclick="go('ar-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
+    <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot sb"></div><span class="nav-lbl sb">Arctic Sunbath</span></div>
+    <div class="nav-item s" id="nav-sb-nyheter" onclick="go('sb-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
+    <div class="nav-item s" id="nav-sb-klaner" onclick="go('sb-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
+    <div class="nav-item s" id="nav-sb-arr" onclick="go('sb-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
+    <div class="nav-item s" id="nav-sb-cwl" onclick="go('sb-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
   </nav>
-  <div class="sidebar-footer">
-    <button class="preview-btn" onclick="openPreview()">👁 Forhåndsvis nettside</button>
-  </div>
 </aside>
 
 <main class="main">
@@ -260,174 +188,111 @@ tbody tr:last-child td { border-bottom:none; }
         <div class="topbar-sub" id="tsub">Oversikt over Arc Alliance</div>
       </div>
     </div>
-    <button class="btn btn-g" onclick="openPreview()">👁 Forhåndsvis</button>
+    <div class="topbar-right">
+      <button class="btn btn-pv" id="pv-btn" onclick="togglePreview()">👁 Forhåndsvis</button>
+    </div>
   </div>
 
-  <div class="content">
+  <div class="workspace">
+    <div class="admin-area">
 
-    <!-- DASHBOARD -->
-    <div class="panel active" id="panel-dashboard">
-      <div class="stats-row">
-        <div class="sbox"><div class="sbox-lbl">Nyheter totalt</div><div class="sbox-val" id="c-ny">—</div></div>
-        <div class="sbox"><div class="sbox-lbl">Klaner totalt</div><div class="sbox-val" id="c-kl">—</div></div>
-        <div class="sbox"><div class="sbox-lbl">Arrangementer</div><div class="sbox-val" id="c-ar">—</div></div>
-        <div class="sbox"><div class="sbox-lbl">CWL-rader</div><div class="sbox-val" id="c-cw">—</div></div>
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-row">
+          <div class="sbox"><div class="sbox-lbl">Nyheter totalt</div><div class="sbox-val" id="c-ny">—</div></div>
+          <div class="sbox"><div class="sbox-lbl">Klaner totalt</div><div class="sbox-val" id="c-kl">—</div></div>
+          <div class="sbox"><div class="sbox-lbl">Arrangementer</div><div class="sbox-val" id="c-ar">—</div></div>
+          <div class="sbox"><div class="sbox-lbl">CWL-rader</div><div class="sbox-val" id="c-cw">—</div></div>
+        </div>
+        <div class="sec-head">
+          <div class="sec-title">Siste nyheter</div>
+          <button class="btn btn-g" onclick="go('al-nyheter')">Se alle →</button>
+        </div>
+        <div class="twrap">
+          <table>
+            <thead><tr><th>Tittel</th><th>Tag</th><th>Allianse</th><th>Dato</th></tr></thead>
+            <tbody id="db-ny"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody>
+          </table>
+        </div>
       </div>
-      <div class="sec-head">
-        <div class="sec-title">Siste nyheter</div>
-        <button class="btn btn-g" onclick="go('al-nyheter')">Se alle →</button>
+
+      <!-- ALLIANCE NYHETER -->
+      <div class="panel" id="panel-al-nyheter">
+        <div class="sec-head"><div class="sec-title">⚡ Alliance-nyheter</div><button class="btn btn-g" onclick="openModal('nyhet','alliance')">+ Ny nyhet</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead><tbody id="tbl-al-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody></table></div>
       </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Tittel</th><th>Tag</th><th>Allianse</th><th>Dato</th></tr></thead>
-          <tbody id="db-ny"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody>
-        </table>
+
+      <!-- INFO -->
+      <div class="panel" id="panel-info">
+        <div class="sec-head"><div class="sec-title">⚙️ Innstillinger</div><button class="btn btn-g" onclick="openModal('info',null)">+ Ny nøkkel</button></div>
+        <div class="twrap"><table><thead><tr><th>Nøkkel</th><th>Verdi</th><th>Oppdatert</th><th></th></tr></thead><tbody id="tbl-info"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody></table></div>
       </div>
+
+      <!-- ARCLINE NYHETER -->
+      <div class="panel" id="panel-ar-nyheter">
+        <div class="sec-head"><div class="sec-title ar">🔴 Arcline · Nyheter</div><button class="btn btn-ar" onclick="openModal('nyhet','arcline')">+ Ny nyhet</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead><tbody id="tbl-ar-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- ARCLINE KLANER -->
+      <div class="panel" id="panel-ar-klaner">
+        <div class="sec-head"><div class="sec-title ar">🔴 Arcline · Klaner</div><button class="btn btn-ar" onclick="openModal('klan','arcline')">+ Ny klan</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Emoji</th><th>Navn</th><th></th></tr></thead><tbody id="tbl-ar-klaner"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- ARCLINE ARR -->
+      <div class="panel" id="panel-ar-arr">
+        <div class="sec-head"><div class="sec-title ar">🔴 Arcline · Arrangementer</div><button class="btn btn-ar" onclick="openModal('arr','arcline')">+ Nytt</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Navn</th><th>Type</th><th>Dato</th><th>Status</th><th></th></tr></thead><tbody id="tbl-ar-arr"><tr class="erow"><td colspan="6">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- ARCLINE CWL -->
+      <div class="panel" id="panel-ar-cwl">
+        <div class="sec-head"><div class="sec-title ar">🔴 Arcline · CWL-statistikk</div><button class="btn btn-ar" onclick="openModal('cwl','arcline')">+ Legg til</button></div>
+        <p class="note">Fallback-stats på kortene. CWL-modalen henter live data fra API.</p>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Klan</th><th>Liga</th><th>Sesong</th><th>Rekord</th><th>Medaljer</th><th>Plassering</th><th>Aktiv</th><th></th></tr></thead><tbody id="tbl-ar-cwl"><tr class="erow"><td colspan="9">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- SUNBATH NYHETER -->
+      <div class="panel" id="panel-sb-nyheter">
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Nyheter</div><button class="btn btn-sb" onclick="openModal('nyhet','sunbath')">+ Ny nyhet</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead><tbody id="tbl-sb-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- SUNBATH KLANER -->
+      <div class="panel" id="panel-sb-klaner">
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Klaner</div><button class="btn btn-sb" onclick="openModal('klan','sunbath')">+ Ny klan</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Emoji</th><th>Navn</th><th></th></tr></thead><tbody id="tbl-sb-klaner"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- SUNBATH ARR -->
+      <div class="panel" id="panel-sb-arr">
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Arrangementer</div><button class="btn btn-sb" onclick="openModal('arr','sunbath')">+ Nytt</button></div>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Navn</th><th>Type</th><th>Dato</th><th>Status</th><th></th></tr></thead><tbody id="tbl-sb-arr"><tr class="erow"><td colspan="6">Laster...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- SUNBATH CWL -->
+      <div class="panel" id="panel-sb-cwl">
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · CWL-statistikk</div><button class="btn btn-sb" onclick="openModal('cwl','sunbath')">+ Legg til</button></div>
+        <p class="note">Fallback-stats på kortene. CWL-modalen henter live data fra API.</p>
+        <div class="twrap"><table><thead><tr><th>Sort.</th><th>Klan</th><th>Liga</th><th>Sesong</th><th>Rekord</th><th>Medaljer</th><th>Plassering</th><th>Aktiv</th><th></th></tr></thead><tbody id="tbl-sb-cwl"><tr class="erow"><td colspan="9">Laster...</td></tr></tbody></table></div>
+      </div>
+
+    </div><!-- /admin-area -->
+
+    <!-- PREVIEW PANE -->
+    <div class="preview-pane" id="preview-pane">
+      <div class="preview-pane-top">
+        <span>👁 arc-alliance.no</span>
+        <div style="display:flex;gap:0.4rem;">
+          <button class="preview-pane-refresh" onclick="refreshPreview()" title="Last inn på nytt">↺</button>
+          <button class="preview-pane-refresh" onclick="togglePreview()" title="Lukk">✕</button>
+        </div>
+      </div>
+      <iframe class="preview-iframe" id="pvframe" src="about:blank"></iframe>
     </div>
 
-    <!-- ALLIANCE NYHETER -->
-    <div class="panel" id="panel-al-nyheter">
-      <div class="sec-head">
-        <div class="sec-title">⚡ Alliance-nyheter</div>
-        <button class="btn btn-g" onclick="openModal('nyhet','alliance')">+ Ny nyhet</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead>
-          <tbody id="tbl-al-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- INFO -->
-    <div class="panel" id="panel-info">
-      <div class="sec-head">
-        <div class="sec-title">⚙️ Innstillinger</div>
-        <button class="btn btn-g" onclick="openModal('info',null)">+ Ny nøkkel</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Nøkkel</th><th>Verdi</th><th>Oppdatert</th><th></th></tr></thead>
-          <tbody id="tbl-info"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ARCLINE NYHETER -->
-    <div class="panel" id="panel-ar-nyheter">
-      <div class="sec-head">
-        <div class="sec-title ar">🔴 Arcline · Nyheter</div>
-        <button class="btn btn-ar" onclick="openModal('nyhet','arcline')">+ Ny nyhet</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead>
-          <tbody id="tbl-ar-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ARCLINE KLANER -->
-    <div class="panel" id="panel-ar-klaner">
-      <div class="sec-head">
-        <div class="sec-title ar">🔴 Arcline · Klaner</div>
-        <button class="btn btn-ar" onclick="openModal('klan','arcline')">+ Ny klan</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Emoji</th><th>Navn</th><th></th></tr></thead>
-          <tbody id="tbl-ar-klaner"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ARCLINE ARRANGEMENTER -->
-    <div class="panel" id="panel-ar-arr">
-      <div class="sec-head">
-        <div class="sec-title ar">🔴 Arcline · Arrangementer</div>
-        <button class="btn btn-ar" onclick="openModal('arr','arcline')">+ Nytt</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Navn</th><th>Type</th><th>Dato</th><th>Status</th><th></th></tr></thead>
-          <tbody id="tbl-ar-arr"><tr class="erow"><td colspan="6">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ARCLINE CWL -->
-    <div class="panel" id="panel-ar-cwl">
-      <div class="sec-head">
-        <div class="sec-title ar">🔴 Arcline · CWL-statistikk</div>
-        <button class="btn btn-ar" onclick="openModal('cwl','arcline')">+ Legg til</button>
-      </div>
-      <p class="note">Fallback-stats som vises på stat-kortene. CWL-modalen henter live data fra API og påvirkes ikke her.</p>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Klan</th><th>Liga</th><th>Sesong</th><th>Rekord</th><th>Medaljer</th><th>Plassering</th><th>Aktiv</th><th></th></tr></thead>
-          <tbody id="tbl-ar-cwl"><tr class="erow"><td colspan="9">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SUNBATH NYHETER -->
-    <div class="panel" id="panel-sb-nyheter">
-      <div class="sec-head">
-        <div class="sec-title sb">🔵 Arctic Sunbath · Nyheter</div>
-        <button class="btn btn-sb" onclick="openModal('nyhet','sunbath')">+ Ny nyhet</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead>
-          <tbody id="tbl-sb-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SUNBATH KLANER -->
-    <div class="panel" id="panel-sb-klaner">
-      <div class="sec-head">
-        <div class="sec-title sb">🔵 Arctic Sunbath · Klaner</div>
-        <button class="btn btn-sb" onclick="openModal('klan','sunbath')">+ Ny klan</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Emoji</th><th>Navn</th><th></th></tr></thead>
-          <tbody id="tbl-sb-klaner"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SUNBATH ARRANGEMENTER -->
-    <div class="panel" id="panel-sb-arr">
-      <div class="sec-head">
-        <div class="sec-title sb">🔵 Arctic Sunbath · Arrangementer</div>
-        <button class="btn btn-sb" onclick="openModal('arr','sunbath')">+ Nytt</button>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Navn</th><th>Type</th><th>Dato</th><th>Status</th><th></th></tr></thead>
-          <tbody id="tbl-sb-arr"><tr class="erow"><td colspan="6">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SUNBATH CWL -->
-    <div class="panel" id="panel-sb-cwl">
-      <div class="sec-head">
-        <div class="sec-title sb">🔵 Arctic Sunbath · CWL-statistikk</div>
-        <button class="btn btn-sb" onclick="openModal('cwl','sunbath')">+ Legg til</button>
-      </div>
-      <p class="note">Fallback-stats som vises på stat-kortene. CWL-modalen henter live data fra API og påvirkes ikke her.</p>
-      <div class="twrap">
-        <table>
-          <thead><tr><th>Sort.</th><th>Klan</th><th>Liga</th><th>Sesong</th><th>Rekord</th><th>Medaljer</th><th>Plassering</th><th>Aktiv</th><th></th></tr></thead>
-          <tbody id="tbl-sb-cwl"><tr class="erow"><td colspan="9">Laster...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
+  </div><!-- /workspace -->
 </main>
 
 <!-- MODAL -->
@@ -441,47 +306,54 @@ tbody tr:last-child td { border-bottom:none; }
   </div>
 </div>
 
-<!-- PREVIEW -->
-<div class="pvpanel" id="pvpanel">
-  <div class="pvtop">
-    <span>👁 Forhåndsvisning — arc-alliance.no</span>
-    <button class="btn btn-ed" onclick="closePreview()">✕ Lukk</button>
-  </div>
-  <iframe class="pvframe" id="pvframe" src="about:blank"></iframe>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast">✓ <span id="tmsg">Lagret</span></div>
 
 <script>
-const SB = 'https://xgkxarqkngoilpsxhqeg.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
-const H = { 'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation' };
+const SB='https://xgkxarqkngoilpsxhqeg.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
+const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
 let _eid=null,_etype=null,_eal=null;
+let _pvOpen=false;
 
-async function sbGet(tbl,q=''){const r=await fetch(SB+'/rest/v1/'+tbl+'?'+q,{headers:H});if(!r.ok)return[];return r.json();}
-async function sbPost(tbl,b){const r=await fetch(SB+'/rest/v1/'+tbl,{method:'POST',headers:H,body:JSON.stringify(b)});return r.json();}
-async function sbPatch(tbl,id,b){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'PATCH',headers:H,body:JSON.stringify(b)});return r.json();}
-async function sbDel(tbl,id){await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'DELETE',headers:H});}
+async function sbGet(tbl,q=''){
+  try{const r=await fetch(SB+'/rest/v1/'+tbl+'?'+q,{headers:H});if(!r.ok)return[];return r.json();}
+  catch(e){return[];}
+}
+async function sbPost(tbl,b){const r=await fetch(SB+'/rest/v1/'+tbl,{method:'POST',headers:H,body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
+async function sbPatch(tbl,id,b){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'PATCH',headers:H,body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
+async function sbDel(tbl,id){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'DELETE',headers:H});if(!r.ok)throw new Error('Delete failed');}
 
-function toast(msg,err=false){const el=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;el.className='toast show'+(err?' err':'');setTimeout(()=>el.className='toast',2800);}
+function toast(msg,err=false){const el=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;el.className='toast show'+(err?' err':'');setTimeout(()=>el.className='toast',3000);}
+
+// Preview
+function togglePreview(){
+  _pvOpen=!_pvOpen;
+  const pane=document.getElementById('preview-pane');
+  const btn=document.getElementById('pv-btn');
+  pane.classList.toggle('open',_pvOpen);
+  btn.classList.toggle('active',_pvOpen);
+  if(_pvOpen){document.getElementById('pvframe').src='https://arc-alliance.no';}
+  else{document.getElementById('pvframe').src='about:blank';}
+}
+function refreshPreview(){document.getElementById('pvframe').src='https://arc-alliance.no';}
 
 const META={
-  'dashboard':    {t:'Dashboard',s:'Oversikt',bar:''},
-  'al-nyheter':   {t:'Alliance · Nyheter',s:'Felles nyheter for begge allianser',bar:''},
-  'info':         {t:'Innstillinger',s:'Nøkkel/verdi-par for nettsiden',bar:''},
-  'ar-nyheter':   {t:'Arcline · Nyheter',s:'Klan-spesifikke nyheter',bar:'arcline'},
-  'ar-klaner':    {t:'Arcline · Klaner',s:'Klaner under Arcline',bar:'arcline'},
-  'ar-arr':       {t:'Arcline · Arrangementer',s:'Events og kamper',bar:'arcline'},
-  'ar-cwl':       {t:'Arcline · CWL-statistikk',s:'Månedlig CWL-data',bar:'arcline'},
-  'sb-nyheter':   {t:'Arctic Sunbath · Nyheter',s:'Klan-spesifikke nyheter',bar:'sunbath'},
-  'sb-klaner':    {t:'Arctic Sunbath · Klaner',s:'Klaner under Arctic Sunbath',bar:'sunbath'},
-  'sb-arr':       {t:'Arctic Sunbath · Arrangementer',s:'Events og kamper',bar:'sunbath'},
-  'sb-cwl':       {t:'Arctic Sunbath · CWL-statistikk',s:'Månedlig CWL-data',bar:'sunbath'},
+  'dashboard':   {t:'Dashboard',s:'Oversikt',bar:''},
+  'al-nyheter':  {t:'Alliance · Nyheter',s:'Felles nyheter',bar:''},
+  'info':        {t:'Innstillinger',s:'Nøkkel/verdi-par',bar:''},
+  'ar-nyheter':  {t:'Arcline · Nyheter',s:'Klan-spesifikke nyheter',bar:'arcline'},
+  'ar-klaner':   {t:'Arcline · Klaner',s:'Klaner under Arcline',bar:'arcline'},
+  'ar-arr':      {t:'Arcline · Arrangementer',s:'Events og kamper',bar:'arcline'},
+  'ar-cwl':      {t:'Arcline · CWL-statistikk',s:'Månedlig CWL-data',bar:'arcline'},
+  'sb-nyheter':  {t:'Arctic Sunbath · Nyheter',s:'Klan-spesifikke nyheter',bar:'sunbath'},
+  'sb-klaner':   {t:'Arctic Sunbath · Klaner',s:'Klaner under Arctic Sunbath',bar:'sunbath'},
+  'sb-arr':      {t:'Arctic Sunbath · Arrangementer',s:'Events og kamper',bar:'sunbath'},
+  'sb-cwl':      {t:'Arctic Sunbath · CWL-statistikk',s:'Månedlig CWL-data',bar:'sunbath'},
 };
 
-const LOADERS={
+const LOAD={
   'dashboard':  loadDashboard,
   'al-nyheter': ()=>loadNyheter('alliance','tbl-al-nyheter'),
   'info':       loadInfo,
@@ -506,10 +378,9 @@ function go(name){
   document.getElementById('tsub').textContent=m.s||'';
   const bar=document.getElementById('tbar');
   bar.className='topbar-bar'+(m.bar?' '+m.bar:'');
-  if(LOADERS[name])LOADERS[name]();
+  if(LOAD[name])LOAD[name]();
 }
 
-// ── Loaders ──
 async function loadDashboard(){
   const[ny,kl,ar,cw]=await Promise.all([sbGet('nyheter','order=sortering.asc'),sbGet('klaner','order=sortering.asc'),sbGet('arrangementer','order=sortering.asc'),sbGet('cwl_stats','order=sortering.asc')]);
   document.getElementById('c-ny').textContent=ny.length;
@@ -521,12 +392,11 @@ async function loadDashboard(){
 }
 
 async function loadNyheter(al,tbId){
-  const q=al==='alliance'?'allianse=eq.alliance':'allianse=eq.'+al;
-  const data=await sbGet('nyheter',q+'&order=sortering.asc');
+  const data=await sbGet('nyheter','allianse=eq.'+al+'&order=sortering.asc');
   const tb=document.getElementById(tbId);
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="5">Ingen nyheter</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
-    <td style="color:var(--text-faint);font-size:.78rem">${r.sortering??''}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${r.sortering??''}</td>
     <td style="font-weight:500">${e(r.tittel)}</td>
     <td style="color:var(--text-dim);font-size:.82rem">${e(r.tag)}</td>
     <td style="color:var(--text-faint);font-size:.82rem">${e(r.dato)}</td>
@@ -541,8 +411,8 @@ async function loadKlaner(al,tbId){
   const tb=document.getElementById(tbId);
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="4">Ingen klaner lagt til ennå</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
-    <td style="color:var(--text-faint);font-size:.78rem">${r.sortering??''}</td>
-    <td style="font-size:1.2rem">${e(r.emoji)}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${r.sortering??''}</td>
+    <td style="font-size:1.15rem">${e(r.emoji)}</td>
     <td style="font-weight:500">${e(r.navn)}</td>
     <td><div class="brow">
       <button class="btn btn-ed" onclick='openModal("klan","${al}",${J(r)})'>Rediger</button>
@@ -555,9 +425,9 @@ async function loadArr(al,tbId){
   const tb=document.getElementById(tbId);
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="6">Ingen arrangementer</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
-    <td style="color:var(--text-faint);font-size:.78rem">${r.sortering??''}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${r.sortering??''}</td>
     <td style="font-weight:500">${e(r.navn)}</td>
-    <td style="font-family:Cinzel,serif;font-size:.68rem;color:var(--gold)">${e(r.type)}</td>
+    <td style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold)">${e(r.type)}</td>
     <td style="color:var(--text-faint);font-size:.82rem">${e(r.dato)}</td>
     <td><span class="badge ${r.status==='Avsluttet'?'badge-off':'badge-on'}">${e(r.status)}</span></td>
     <td><div class="brow">
@@ -571,10 +441,10 @@ async function loadCWL(al,tbId){
   const tb=document.getElementById(tbId);
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="9">Ingen CWL-stats lagt til ennå</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
-    <td style="color:var(--text-faint);font-size:.78rem">${r.sortering??''}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${r.sortering??''}</td>
     <td style="font-weight:500">${e(r.klan_navn)}</td>
     <td style="color:var(--gold);font-size:.82rem">${e(r.liga)}</td>
-    <td style="color:var(--text-faint);font-size:.78rem">${e(r.sesong)}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${e(r.sesong)}</td>
     <td style="font-size:.82rem">${e(r.rekord)}</td>
     <td style="color:var(--gold);font-size:.82rem">🏅 ${e(r.medaljer)}</td>
     <td style="font-size:.82rem">${e(r.plassering)}</td>
@@ -590,9 +460,9 @@ async function loadInfo(){
   const tb=document.getElementById('tbl-info');
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="4">Ingen nøkler</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
-    <td style="font-family:Cinzel,serif;font-size:.68rem;color:var(--gold)">${e(r.nokkel)}</td>
-    <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem">${e(r.verdi)}</td>
-    <td style="color:var(--text-faint);font-size:.78rem">${r.updated_at?new Date(r.updated_at).toLocaleDateString('nb-NO'):''}</td>
+    <td style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold)">${e(r.nokkel)}</td>
+    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem">${e(r.verdi)}</td>
+    <td style="color:var(--text-faint);font-size:.75rem">${r.updated_at?new Date(r.updated_at).toLocaleDateString('nb-NO'):''}</td>
     <td><div class="brow">
       <button class="btn btn-ed" onclick='openModal("info",null,${J(r)})'>Rediger</button>
       <button class="btn btn-del" onclick="del('info','${r.id}',loadInfo)">Slett</button>
@@ -601,12 +471,10 @@ async function loadInfo(){
 
 async function del(tbl,id,reload){
   if(!confirm('Slett denne raden?'))return;
-  await sbDel(tbl,id);
-  toast('Slettet');
-  reload();
+  try{await sbDel(tbl,id);toast('Slettet');reload();}
+  catch(err){toast('Feil ved sletting',true);}
 }
 
-// ── Modal ──
 function openModal(type,al,data=null){
   _eid=data?data.id:null;_etype=type;_eal=al;
   const box=document.getElementById('mbox');
@@ -628,43 +496,42 @@ function buildForm(type,al,v){
   const opts=(arr,cur)=>arr.map(x=>`<option${cur===x?' selected':''}>${x}</option>`).join('');
 
   if(type==='nyhet')return`<div class="fgrid">
-    <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="f-tittel" value="${e(v.tittel)}" placeholder="Tittel..."></div>
-    <div class="fg"><label class="flbl">Tag (f.eks. ⚔️ Krig)</label><input class="finp" id="f-tag" value="${e(v.tag)}" placeholder="📢 Nyhet"></div>
-    <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse)}</textarea></div>
-    <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato)}" placeholder="2026-04-17"></div>
+    <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="f-tittel" value="${e(v.tittel||'')}" placeholder="Tittel..."></div>
+    <div class="fg"><label class="flbl">Tag</label><input class="finp" id="f-tag" value="${e(v.tag||'')}" placeholder="📢 Nyhet"></div>
+    <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
+    <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-04-17"></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
 
   if(type==='klan')return`<div class="fgrid">
-    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-navn" value="${e(v.navn)}" placeholder="Arcline"></div>
-    <div class="fg"><label class="flbl">Emoji</label><input class="finp" id="f-emoji" value="${e(v.emoji)}" placeholder="⚔"></div>
+    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-navn" value="${e(v.navn||'')}" placeholder="Arcline"></div>
+    <div class="fg"><label class="flbl">Emoji</label><input class="finp" id="f-emoji" value="${e(v.emoji||'')}" placeholder="⚔"></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
 
   if(type==='arr')return`<div class="fgrid">
-    <div class="fg"><label class="flbl">Navn</label><input class="finp" id="f-navn" value="${e(v.navn)}" placeholder="King of the Hill"></div>
+    <div class="fg"><label class="flbl">Navn</label><input class="finp" id="f-navn" value="${e(v.navn||'')}" placeholder="King of the Hill"></div>
     <div class="fg"><label class="flbl">Type</label><select class="fsel" id="f-type">${opts(['KOTH','CWL','Turnering','Krig','Info'],v.type)}</select></div>
-    <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato)}" placeholder="2026-05-01"></div>
+    <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-05-01"></div>
     <div class="fg"><label class="flbl">Status</label><select class="fsel" id="f-status">${opts(['Kommende','Pågår','Avsluttet'],v.status)}</select></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
 
   if(type==='cwl')return`<div class="fgrid">
-    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-klan" value="${e(v.klan_navn)}" placeholder="Arctic Sunbath"></div>
-    <div class="fg"><label class="flbl">Liga</label><input class="finp" id="f-liga" value="${e(v.liga)}" placeholder="Stormester I"></div>
-    <div class="fg"><label class="flbl">Sesong (YYYY-MM)</label><input class="finp" id="f-sesong" value="${e(v.sesong)||'2026-04'}" placeholder="2026-04"></div>
-    <div class="fg"><label class="flbl">Rekord</label><input class="finp" id="f-rekord" value="${e(v.rekord)}" placeholder="5W - 2T"></div>
-    <div class="fg"><label class="flbl">Medaljer</label><input class="finp" id="f-medaljer" value="${e(v.medaljer)}" placeholder="280"></div>
-    <div class="fg"><label class="flbl">Plassering</label><input class="finp" id="f-plass" value="${e(v.plassering)}" placeholder="#1 i gruppen"></div>
+    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-klan" value="${e(v.klan_navn||'')}" placeholder="Arctic Sunbath"></div>
+    <div class="fg"><label class="flbl">Liga</label><input class="finp" id="f-liga" value="${e(v.liga||'')}" placeholder="Stormester I"></div>
+    <div class="fg"><label class="flbl">Sesong (YYYY-MM)</label><input class="finp" id="f-sesong" value="${e(v.sesong||'2026-04')}" placeholder="2026-04"></div>
+    <div class="fg"><label class="flbl">Rekord</label><input class="finp" id="f-rekord" value="${e(v.rekord||'')}" placeholder="5W - 2T"></div>
+    <div class="fg"><label class="flbl">Medaljer</label><input class="finp" id="f-medaljer" value="${e(v.medaljer||'')}" placeholder="280"></div>
+    <div class="fg"><label class="flbl">Plassering</label><input class="finp" id="f-plass" value="${e(v.plassering||'')}" placeholder="#1 i gruppen"></div>
     <div class="fg"><label class="flbl">Aktiv denne måneden</label><select class="fsel" id="f-aktiv"><option value="true"${v.aktiv_denne_maned!==false?' selected':''}>Ja</option><option value="false"${v.aktiv_denne_maned===false?' selected':''}>Nei</option></select></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
 
   if(type==='info')return`<div class="fgrid" style="grid-template-columns:1fr">
-    <div class="fg"><label class="flbl">Nøkkel</label><input class="finp" id="f-nokkel" value="${e(v.nokkel)}" placeholder="koth_tittel"></div>
-    <div class="fg"><label class="flbl">Verdi</label><textarea class="ftxt" id="f-verdi">${e(v.verdi)}</textarea></div>
+    <div class="fg"><label class="flbl">Nøkkel</label><input class="finp" id="f-nokkel" value="${e(v.nokkel||'')}" placeholder="koth_tittel"></div>
+    <div class="fg"><label class="flbl">Verdi</label><textarea class="ftxt" id="f-verdi">${e(v.verdi||'')}</textarea></div>
   </div>${acts}`;
-
   return '';
 }
 
@@ -673,7 +540,6 @@ function gv(id){const el=document.getElementById(id);return el?el.value:'';}
 async function saveForm(){
   const type=_etype,al=_eal;
   let body={},tbl='';
-
   if(type==='nyhet'){tbl='nyheter';body={tittel:gv('f-tittel'),tag:gv('f-tag'),beskrivelse:gv('f-beskrivelse'),dato:gv('f-dato'),sortering:parseInt(gv('f-sort'))||0,allianse:al};}
   else if(type==='klan'){tbl='klaner';body={navn:gv('f-navn'),emoji:gv('f-emoji'),allianse:al,sortering:parseInt(gv('f-sort'))||0};}
   else if(type==='arr'){tbl='arrangementer';body={navn:gv('f-navn'),type:gv('f-type'),allianse:al,dato:gv('f-dato'),status:gv('f-status'),sortering:parseInt(gv('f-sort'))||0};}
@@ -683,21 +549,23 @@ async function saveForm(){
   try{
     if(_eid)await sbPatch(tbl,_eid,body);
     else await sbPost(tbl,body);
-    closeModal();toast('Lagret! ✓');
-
+    closeModal();
+    toast('Lagret! ✓');
     const rl={
-      nyhet:  ()=>al==='alliance'?loadNyheter('alliance','tbl-al-nyheter'):al==='arcline'?loadNyheter('arcline','tbl-ar-nyheter'):loadNyheter('sunbath','tbl-sb-nyheter'),
-      klan:   ()=>al==='arcline'?loadKlaner('arcline','tbl-ar-klaner'):loadKlaner('sunbath','tbl-sb-klaner'),
-      arr:    ()=>al==='arcline'?loadArr('arcline','tbl-ar-arr'):loadArr('sunbath','tbl-sb-arr'),
-      cwl:    ()=>al==='arcline'?loadCWL('arcline','tbl-ar-cwl'):loadCWL('sunbath','tbl-sb-cwl'),
-      info:   loadInfo,
+      nyhet:()=>al==='alliance'?loadNyheter('alliance','tbl-al-nyheter'):al==='arcline'?loadNyheter('arcline','tbl-ar-nyheter'):loadNyheter('sunbath','tbl-sb-nyheter'),
+      klan:()=>al==='arcline'?loadKlaner('arcline','tbl-ar-klaner'):loadKlaner('sunbath','tbl-sb-klaner'),
+      arr:()=>al==='arcline'?loadArr('arcline','tbl-ar-arr'):loadArr('sunbath','tbl-sb-arr'),
+      cwl:()=>al==='arcline'?loadCWL('arcline','tbl-ar-cwl'):loadCWL('sunbath','tbl-sb-cwl'),
+      info:loadInfo,
     };
     if(rl[type])rl[type]();
     loadDashboard();
-  }catch(err){toast('Feil ved lagring',true);}
+  }catch(err){
+    console.error(err);
+    toast('Feil ved lagring: '+err.message,true);
+  }
 }
 
-// helpers
 function abadge(a){
   if(!a||a==='alliance')return'<span class="badge badge-al">Alliance</span>';
   if(a==='arcline')return'<span class="badge badge-ar">Arcline</span>';
@@ -705,14 +573,9 @@ function abadge(a){
   return'';
 }
 function e(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function J(r){return JSON.stringify(r).replace(/'/g,"&#39;");}
+function J(r){return JSON.stringify(r).replace(/'/g,"&#39;").replace(/\n/g,'\\n');}
 
-// preview
-function openPreview(){document.getElementById('pvframe').src='https://arc-alliance.no';document.getElementById('pvpanel').classList.add('open');}
-function closePreview(){document.getElementById('pvpanel').classList.remove('open');document.getElementById('pvframe').src='about:blank';}
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePreview();}});
-
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
 loadDashboard();
 </script>
 </body>
