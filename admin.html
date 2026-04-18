@@ -159,64 +159,67 @@ tbody tr:last-child td { border-bottom:none; }
 .note { font-size:0.8rem; color:var(--text-faint); margin-bottom:0.9rem; }
 
 /* ── MOBIL ── */
+.mob-menu-btn { display: none; }
+
 @media (max-width: 768px) {
-  body { flex-direction: column; overflow: auto; }
+  body { flex-direction: row; overflow: hidden; }
 
+  /* Sidebar blir en overlay */
   .sidebar {
-    width: 100%; height: auto; position: relative;
-    flex-direction: row; flex-wrap: wrap;
-    border-right: none; border-bottom: 1px solid var(--border);
+    position: fixed; top: 0; left: -100%; width: 80%; max-width: 280px;
+    height: 100vh; z-index: 200;
+    transition: left 0.25s ease;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
   }
-  .sidebar-logo { padding: 0.8rem 1rem; border-bottom: none; flex: 1; }
-  .sidebar-logo-title { font-size: 0.75rem; }
-  .sidebar-logo-sub { display: none; }
+  .sidebar.mob-open { left: 0; }
 
-  .sidebar-nav {
-    display: none; width: 100%;
-    border-top: 1px solid var(--border);
-    padding: 0.5rem 0;
+  /* Overlay bakgrunn */
+  .mob-overlay {
+    display: none; position: fixed; inset: 0; z-index: 199;
+    background: rgba(0,0,0,0.6);
   }
-  .sidebar-nav.mob-open { display: block; }
+  .mob-overlay.show { display: block; }
+
+  .sidebar-logo { padding: 1rem 1.2rem; }
+  .sidebar-nav { display: block; }
 
   .mob-menu-btn {
     display: flex; align-items: center; justify-content: center;
     background: none; border: 1px solid rgba(255,215,0,0.25);
-    color: var(--gold); font-size: 1.2rem;
+    color: var(--gold); font-size: 1.3rem;
     width: 38px; height: 38px; cursor: pointer;
-    margin: 0.7rem 1rem 0.7rem auto;
+    flex-shrink: 0;
   }
 
-  .nav-item { padding: 0.6rem 1.2rem 0.6rem 1.5rem; font-size: 0.75rem; }
-
-  .main { overflow: auto; height: auto; }
-  .workspace { flex-direction: column; overflow: visible; }
+  .main { flex: 1; overflow: hidden; }
+  .workspace { flex-direction: column; overflow-y: auto; }
   .admin-area { overflow: visible; padding: 1rem; }
 
-  .topbar { padding: 0.7rem 1rem; }
-  .topbar-title { font-size: 0.75rem; }
+  .topbar { padding: 0.7rem 1rem; gap: 0.7rem; }
+  .topbar-title { font-size: 0.78rem; }
   .topbar-sub { display: none; }
-  #pv-btn { font-size: 0.55rem; padding: 0.4rem 0.7rem; }
 
   .stats-row { grid-template-columns: repeat(2,1fr); gap: 0.6rem; }
   .sbox-val { font-size: 1.3rem; }
 
   .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 500px; }
-  thead th { font-size: 0.5rem; padding: 0.55rem 0.6rem; }
-  tbody td { font-size: 0.8rem; padding: 0.55rem 0.6rem; }
+  table { min-width: 480px; }
+  thead th { font-size: 0.5rem; padding: 0.5rem 0.6rem; }
+  tbody td { font-size: 0.8rem; padding: 0.5rem 0.6rem; }
 
-  .mbox { max-width: 100%; max-height: 95vh; margin: 0.5rem; width: calc(100vw - 1rem); }
-  .mbody { padding: 1rem; }
+  .mbox { max-width: calc(100vw - 1rem); max-height: 92vh; }
+  .mbox-inner { flex-direction: column; }
+  .mform-side { padding: 1rem; }
+  .mprev-side { width: 100%; border-right: none; border-top: 1px solid var(--border); padding: 1rem; }
   .fgrid { grid-template-columns: 1fr; }
   .fg.sp { grid-column: 1; }
-  .finp, .fsel, .ftxt { font-size: 1rem; padding: 0.6rem 0.7rem; }
+  .finp, .fsel, .ftxt { font-size: 1rem; padding: 0.65rem 0.75rem; }
   .factions { flex-direction: column; gap: 0.5rem; }
-  .factions .btn { width: 100%; justify-content: center; }
+  .factions .btn { width: 100%; justify-content: center; padding: 0.75rem; }
 
   .preview-pane { display: none; }
 }
-
-.mob-menu-btn { display: none; }
 @media (max-width: 768px) { .mob-menu-btn { display: flex !important; } }
 
 
@@ -272,12 +275,13 @@ tbody tr:last-child td { border-bottom:none; }
   </div>
 </div>
 
-<aside class="sidebar">
+<div class="mob-overlay" id="mob-overlay" onclick="closeMobNav()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-title">⚔ Arc Alliance</div>
     <div class="sidebar-logo-sub">Admin Panel</div>
   </div>
-  <button class="mob-menu-btn" onclick="toggleMobNav()" id="mob-btn">☰</button>
+
   <nav class="sidebar-nav">
     <div class="nav-section"><div class="nav-dot al"></div><span class="nav-lbl">Oversikt</span></div>
     <div class="nav-item active" id="nav-dashboard" onclick="goMob('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
@@ -300,6 +304,7 @@ tbody tr:last-child td { border-bottom:none; }
 <main class="main">
   <div class="topbar">
     <div class="topbar-left">
+      <button class="mob-menu-btn" onclick="toggleMobNav()" id="mob-btn">☰</button>
       <div class="topbar-bar" id="tbar"></div>
       <div>
         <div class="topbar-title" id="ttitle">Dashboard</div>
@@ -827,18 +832,25 @@ function loggUt(){
 }
 
 function toggleMobNav(){
-  const nav = document.querySelector('.sidebar-nav');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mob-overlay');
   const btn = document.getElementById('mob-btn');
-  nav.classList.toggle('mob-open');
-  btn.textContent = nav.classList.contains('mob-open') ? '✕' : '☰';
+  sidebar.classList.toggle('mob-open');
+  overlay.classList.toggle('show');
+  btn.textContent = sidebar.classList.contains('mob-open') ? '✕' : '☰';
+}
+function closeMobNav(){
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mob-overlay');
+  const btn = document.getElementById('mob-btn');
+  sidebar.classList.remove('mob-open');
+  overlay.classList.remove('show');
+  btn.textContent = '☰';
 }
 
 function goMob(name){
   go(name);
-  const nav = document.querySelector('.sidebar-nav');
-  const btn = document.getElementById('mob-btn');
-  nav.classList.remove('mob-open');
-  btn.textContent = '☰';
+  closeMobNav();
 }
 loadDashboard();
 </script>
