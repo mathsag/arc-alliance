@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="arcline_red_transparent.png" id="favicon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arc Alliance</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -1351,6 +1352,18 @@ function closeMobileNav() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// Animert favicon
+(function() {
+  var favicons = ['arcline_red_transparent.png', 'Arcline_blue_transparent.png'];
+  var current = 0;
+  setInterval(function() {
+    current = (current + 1) % favicons.length;
+    var link = document.getElementById('favicon');
+    if (link) link.href = favicons[current];
+  }, 2000);
+})();
+
 </script>
 
 
