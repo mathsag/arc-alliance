@@ -1344,12 +1344,11 @@ function closeModalOutside(e) {
 function toggleMobileNav() {
   document.getElementById('mobileNav').classList.toggle('open');
   document.getElementById('hamburger').classList.toggle('open');
-  document.body.style.overflow = document.getElementById('mobileNav').classList.contains('open') ? 'hidden' : '';
+  // overflow håndteres av mobile-nav overlay
 }
 function closeMobileNav() {
   document.getElementById('mobileNav').classList.remove('open');
   document.getElementById('hamburger').classList.remove('open');
-  document.body.style.overflow = '';
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
