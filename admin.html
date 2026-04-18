@@ -329,15 +329,11 @@ function toast(msg,err=false){const el=document.getElementById('toast');document
 
 // Preview
 function togglePreview(){
-  _pvOpen=!_pvOpen;
-  const pane=document.getElementById('preview-pane');
-  const btn=document.getElementById('pv-btn');
-  pane.classList.toggle('open',_pvOpen);
-  btn.classList.toggle('active',_pvOpen);
-  if(_pvOpen){document.getElementById('pvframe').src='https://arc-alliance.no';}
-  else{document.getElementById('pvframe').src='about:blank';}
+  window.open('https://arc-alliance.no','arc-preview','width=1200,height=800,left=100,top=100');
 }
-function refreshPreview(){document.getElementById('pvframe').src='https://arc-alliance.no';}
+function refreshPreview(){
+  if(window._pvWin && !window._pvWin.closed) window._pvWin.location.reload();
+}
 
 const META={
   'dashboard':   {t:'Dashboard',s:'Oversikt',bar:''},
