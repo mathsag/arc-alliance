@@ -307,8 +307,9 @@ tbody tr:last-child td { border-bottom:none; }
       </div>
     </div>
     <div class="topbar-right">
-      <button class="btn btn-pv" id="pv-btn" onclick="togglePreview()">👁 Forhåndsvis</button>
+      <button class="btn btn-ed" onclick="loggUt()">⎋ Logg ut</button>
     </div>
+
   </div>
 
   <div class="workspace">
@@ -819,6 +820,11 @@ document.addEventListener('keydown', ev => {
   }
 });
 
+
+function loggUt(){
+  sessionStorage.removeItem('arc_token');
+  location.reload();
+}
 
 function toggleMobNav(){
   const nav = document.querySelector('.sidebar-nav');
