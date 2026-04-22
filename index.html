@@ -1731,23 +1731,38 @@ async function loadArrangementerFraSupabase() {
       'Info': '<span class="event-type event-cwl">Info</span>',
     };
 
-    function byggRader(items) {
-      if (!items.length) return '<tr><td colspan="4" style="text-align:center;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;font-size:0.75rem;padding:1.5rem;letter-spacing:2px;">Ingen arrangementer</td></tr>';
-      return items.map(function(e) {
+    function byggOgBind(items, el) {
+      if (!el) return;
+      if (!items.length) {
+        el.innerHTML = '<tr><td colspan="4" style="text-align:center;color:rgba(232,224,204,0.3);font-family:Cinzel,serif;font-size:0.75rem;padding:1.5rem;letter-spacing:2px;">Ingen arrangementer</td></tr>';
+        return;
+      }
+      var arrCache = [];
+      el.innerHTML = items.map(function(e, idx) {
         var dato = e.dato ? new Date(e.dato).toLocaleDateString('nb-NO', {day:'numeric', month:'long'}) : 'Kommer snart';
         var type = typeMap[e.type] || '<span class="event-type">' + (e.type || '') + '</span>';
         var color = e.status === 'Avsluttet' ? 'rgba(200,200,200,0.4)' : '#FFD700';
         var besk = e.beskrivelse || '';
-        var harInfo = besk || e.lenke;
-        return '<tr style="cursor:' + (harInfo?'pointer':'default') + '" ' + (harInfo ? 'onclick="openArrModal(' + JSON.stringify(e.navn||'') + ',' + JSON.stringify(e.type||'') + ',' + JSON.stringify(dato) + ',' + JSON.stringify(e.status||'') + ',' + JSON.stringify(color) + ',' + JSON.stringify(besk) + ',' + JSON.stringify(e.lenke||null) + ',' + JSON.stringify(e.lenke_tekst||null) + ')"' : '') + '><td>' + (e.navn||'') + (harInfo ? ' <span style="font-family:Cinzel,serif;font-size:0.55rem;color:rgba(255,215,0,0.5);letter-spacing:1px;">↗</span>' : '') + '</td><td>' + type + '</td><td>' + dato + '</td><td style="color:' + color + '">' + (e.status || '') + '</td></tr>';
+        var harInfo = !!(besk || e.lenke);
+        if (harInfo) arrCache[idx] = { navn: e.navn||'', type: e.type||'', dato: dato, status: e.status||'', farge: color, besk: besk, lenke: e.lenke||null, lenkeTekst: e.lenke_tekst||null };
+        return '<tr data-idx="' + idx + '" style="cursor:' + (harInfo?'pointer':'default') + '"><td>' + (e.navn||'') + (harInfo ? ' <span style="font-family:Cinzel,serif;font-size:0.55rem;color:rgba(255,215,0,0.5);letter-spacing:1px;">↗</span>' : '') + '</td><td>' + type + '</td><td>' + dato + '</td><td style="color:' + color + '">' + (e.status || '') + '</td></tr>';
       }).join('');
+      el.querySelectorAll('tr[data-idx]').forEach(function(tr) {
+        var idx = parseInt(tr.dataset.idx);
+        if (arrCache[idx]) {
+          tr.addEventListener('click', function() {
+            var d = arrCache[idx];
+            openArrModal(d.navn, d.type, d.dato, d.status, d.farge, d.besk, d.lenke, d.lenkeTekst);
+          });
+        }
+      });
     }
 
     const arclineEl = document.getElementById('arcline-events-body');
     const sunbathEl = document.getElementById('sunbath-events-body');
 
-    if (arclineEl) arclineEl.innerHTML = byggRader(arcline);
-    if (sunbathEl) sunbathEl.innerHTML = byggRader(sunbath);
+    byggOgBind(arcline, arclineEl);
+    byggOgBind(sunbath, sunbathEl);
 
   } catch(e) { console.log('Arrangementer error:', e); }
 }
