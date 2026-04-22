@@ -1579,7 +1579,14 @@ async function loadInfoFraSupabase() {
 
     if (kothLabel) document.getElementById('koth-label').textContent = kothLabel;
     if (kothTitle) document.getElementById('koth-title').textContent = kothTitle;
-    if (kothDesc)  document.getElementById('koth-desc').innerHTML = kothDesc;
+    if (kothDesc) {
+      const kothLenke = get('koth_lenke');
+      if (kothLenke) {
+        document.getElementById('koth-desc').innerHTML = kothDesc + ' <a href="' + kothLenke + '" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none;">' + kothLenke.replace('https://', '') + '</a>.';
+      } else {
+        document.getElementById('koth-desc').innerHTML = kothDesc;
+      }
+    }
 
     if (sesong) {
       const months = {'01':'Januar','02':'Februar','03':'Mars','04':'April','05':'Mai','06':'Juni','07':'Juli','08':'August','09':'September','10':'Oktober','11':'November','12':'Desember'};

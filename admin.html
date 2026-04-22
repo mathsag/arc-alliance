@@ -351,6 +351,7 @@ tbody tr:last-child td { border-bottom:none; }
           <div class="fg"><label class="flbl">Label (over tittelen)</label><input class="finp" id="koth-label-inp" placeholder="Kommende Arrangement"></div>
           <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="koth-tittel-inp" placeholder="King of the Hill"></div>
           <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="koth-beskrivelse-inp" style="min-height:60px;"></textarea></div>
+          <div class="fg"><label class="flbl">Discord-lenke (valgfri)</label><input class="finp" id="koth-lenke-inp" placeholder="https://discord.gg/..."></div>
         </div>
         <div id="koth-msg" style="font-family:Cinzel,serif;font-size:0.62rem;margin-bottom:0.6rem;min-height:1rem;"></div>
         <button class="btn btn-g" onclick="lagreKOTH()">💾 Lagre KOTH-banner</button>
@@ -905,6 +906,8 @@ async function lastKOTH() {
   if (lbl) lbl.value = get('koth_label');
   if (tit) tit.value = get('koth_tittel');
   if (bes) bes.value = get('koth_beskrivelse');
+  const len = document.getElementById('koth-lenke-inp');
+  if (len) len.value = get('koth_lenke');
 }
 
 async function lagreKOTH() {
@@ -913,6 +916,7 @@ async function lagreKOTH() {
     { nokkel: 'koth_label', verdi: document.getElementById('koth-label-inp').value },
     { nokkel: 'koth_tittel', verdi: document.getElementById('koth-tittel-inp').value },
     { nokkel: 'koth_beskrivelse', verdi: document.getElementById('koth-beskrivelse-inp').value },
+    { nokkel: 'koth_lenke', verdi: document.getElementById('koth-lenke-inp').value },
   ];
   try {
     const data = await sbGet('info', 'order=nokkel.asc');
