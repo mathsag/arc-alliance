@@ -1352,6 +1352,33 @@ function closeMobileNav() {
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
+function openNyhetModal(tittel, tag, beskrivelse, dato, lenke, lenkeTekst) {
+  document.getElementById('nyhet-modal-tittel').textContent = tittel || '';
+  document.getElementById('nyhet-modal-tag').textContent = tag || '';
+  document.getElementById('nyhet-modal-beskrivelse').textContent = beskrivelse || '';
+  document.getElementById('nyhet-modal-dato').textContent = dato || '';
+  var lenkeWrap = document.getElementById('nyhet-modal-lenke-wrap');
+  var lenkeEl = document.getElementById('nyhet-modal-lenke');
+  if (lenke) {
+    lenkeEl.href = lenke;
+    lenkeEl.textContent = lenkeTekst || 'Les mer →';
+    lenkeWrap.style.display = 'block';
+  } else {
+    lenkeWrap.style.display = 'none';
+  }
+  var modal = document.getElementById('nyhetModal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeNyhetModal(e) {
+  if (!e || e.target === document.getElementById('nyhetModal')) {
+    document.getElementById('nyhetModal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+
 // Animert favicon
 (function() {
   var favicons = ['arcline_red_transparent.png', 'Arcline_blue_transparent.png'];
@@ -1368,7 +1395,29 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 
 
 
-<!-- ARC ALLIANCE PATCH — lim inn rett før </body> -->
+<!-- ARC ALLIANCE PATCH — lim inn rett før 
+<!-- NYHET MODAL -->
+<div class="modal-overlay" id="nyhetModal" onclick="closeNyhetModal(event)" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#0d0d18;border:1px solid rgba(255,215,0,0.2);max-width:560px;width:100%;max-height:85vh;overflow-y:auto;animation:modalIn 0.22s ease;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,0.1);">
+      <div id="nyhet-modal-tag" style="font-family:Cinzel,serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);"></div>
+      <button onclick="closeNyhetModal()" style="background:none;border:1px solid rgba(255,215,0,0.15);color:rgba(232,224,204,0.5);width:26px;height:26px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="padding:1.4rem;">
+      <div id="nyhet-modal-tittel" style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--text-light);margin-bottom:1rem;line-height:1.4;"></div>
+      <div id="nyhet-modal-beskrivelse" style="font-size:0.95rem;color:rgba(232,224,204,0.7);line-height:1.7;margin-bottom:1.2rem;"></div>
+      <div id="nyhet-modal-dato" style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:rgba(232,224,204,0.3);margin-bottom:1.2rem;"></div>
+      <div id="nyhet-modal-lenke-wrap" style="display:none;">
+        <a id="nyhet-modal-lenke" href="#" target="_blank" style="display:inline-block;font-family:Cinzel,serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.5rem 1.2rem;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.1)'" onmouseout="this.style.background='none'"></a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes modalIn { from{opacity:0;transform:translateY(12px) scale(0.97);}to{opacity:1;transform:none;} }
+</style>
+
+</body> -->
 
 <style>
 /* ════════════════════════════════════
@@ -1484,11 +1533,12 @@ async function loadKlanNyheter() {
       if (!items.length) return '<div style="color:rgba(232,224,204,0.3);font-family:Cinzel,serif;font-size:0.75rem;letter-spacing:2px;padding:1rem;">Ingen nyheter ennå</div>';
       return items.map(n => {
         var dato = n.dato ? new Date(n.dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '';
-        return '<div class="clan-news-card clan-news-' + farge + '">' +
+        return '<div class="clan-news-card clan-news-' + farge + '" style="cursor:pointer" onclick="openNyhetModal(' + JSON.stringify(n.tittel) + ',' + JSON.stringify(n.tag) + ',' + JSON.stringify(n.beskrivelse) + ',' + JSON.stringify(dato) + ',' + JSON.stringify(n.lenke||null) + ',' + JSON.stringify(n.lenke_tekst||null) + ')">' +
           '<div class="clan-news-tag tag-' + farge + '">' + (n.tag || '') + '</div>' +
           '<div class="clan-news-title">' + (n.tittel || '') + '</div>' +
           '<div class="clan-news-body">' + (n.beskrivelse || '') + '</div>' +
           (dato ? '<div style="font-size:0.8rem;color:rgba(255,215,0,0.4);margin-top:0.8rem;font-family:Cinzel,serif;">' + dato + '</div>' : '') +
+          (n.lenke ? '<div style="margin-top:0.8rem;"><span style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.35rem 0.9rem;">Les mer →</span></div>' : '') +
         '</div>';
       }).join('');
     }
@@ -1668,11 +1718,15 @@ async function loadSupabaseNews() {
     data.forEach(function(n) {
       var card = document.createElement('div');
       card.className = 'news-card';
+      card.style.cursor = 'pointer';
+      var dato = n.dato ? new Date(n.dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '';
       card.innerHTML =
         '<div class="news-tag">' + (n.tag || '📢 Nyhet') + '</div>' +
         '<div class="news-title">' + (n.tittel || '') + '</div>' +
-        '<div class="news-body">' + (n.innhold || '') + '</div>' +
-        '<div class="news-date">' + (n.dato ? new Date(n.dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '') + '</div>';
+        '<div class="news-body">' + (n.beskrivelse || n.innhold || '') + '</div>' +
+        '<div class="news-date">' + dato + '</div>' +
+        (n.lenke ? '<div style="margin-top:0.8rem;"><span style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.35rem 0.9rem;cursor:pointer;">Les mer →</span></div>' : '');
+      card.onclick = function() { openNyhetModal(n.tittel, n.tag, n.beskrivelse || n.innhold, dato, n.lenke, n.lenke_tekst); };
       grid.insertBefore(card, grid.firstChild);
     });
   } catch(e) { console.log('Supabase news error:', e); }
@@ -1787,5 +1841,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+<!-- NYHET MODAL -->
+<div class="modal-overlay" id="nyhetModal" onclick="closeNyhetModal(event)" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#0d0d18;border:1px solid rgba(255,215,0,0.2);max-width:560px;width:100%;max-height:85vh;overflow-y:auto;animation:modalIn 0.22s ease;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,0.1);">
+      <div id="nyhet-modal-tag" style="font-family:Cinzel,serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);"></div>
+      <button onclick="closeNyhetModal()" style="background:none;border:1px solid rgba(255,215,0,0.15);color:rgba(232,224,204,0.5);width:26px;height:26px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="padding:1.4rem;">
+      <div id="nyhet-modal-tittel" style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--text-light);margin-bottom:1rem;line-height:1.4;"></div>
+      <div id="nyhet-modal-beskrivelse" style="font-size:0.95rem;color:rgba(232,224,204,0.7);line-height:1.7;margin-bottom:1.2rem;"></div>
+      <div id="nyhet-modal-dato" style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:rgba(232,224,204,0.3);margin-bottom:1.2rem;"></div>
+      <div id="nyhet-modal-lenke-wrap" style="display:none;">
+        <a id="nyhet-modal-lenke" href="#" target="_blank" style="display:inline-block;font-family:Cinzel,serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.5rem 1.2rem;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.1)'" onmouseout="this.style.background='none'"></a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes modalIn { from{opacity:0;transform:translateY(12px) scale(0.97);}to{opacity:1;transform:none;} }
+</style>
+
 </body>
 </html>

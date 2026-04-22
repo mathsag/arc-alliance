@@ -343,6 +343,18 @@ tbody tr:last-child td { border-bottom:none; }
       <!-- ALLIANCE NYHETER -->
       <div class="panel" id="panel-al-nyheter">
         <div class="sec-head"><div class="sec-title">⚡ Alliance-nyheter</div><button class="btn btn-g" onclick="openModal('nyhet','alliance')">+ Ny nyhet</button></div>
+
+      <!-- KOTH BANNER -->
+      <div style="background:var(--dark3);border:1px solid var(--border);padding:1.2rem;margin-bottom:1.3rem;">
+        <div style="font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:2px;color:var(--gold);margin-bottom:1rem;">👑 KING OF THE HILL BANNER</div>
+        <div class="fgrid" style="gap:0.8rem;margin-bottom:0.8rem;">
+          <div class="fg"><label class="flbl">Label (over tittelen)</label><input class="finp" id="koth-label-inp" placeholder="Kommende Arrangement"></div>
+          <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="koth-tittel-inp" placeholder="King of the Hill"></div>
+          <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="koth-beskrivelse-inp" style="min-height:60px;"></textarea></div>
+        </div>
+        <div id="koth-msg" style="font-family:Cinzel,serif;font-size:0.62rem;margin-bottom:0.6rem;min-height:1rem;"></div>
+        <button class="btn btn-g" onclick="lagreKOTH()">💾 Lagre KOTH-banner</button>
+      </div>
         <div class="twrap"><table><thead><tr><th>Sort.</th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead><tbody id="tbl-al-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody></table></div>
       </div>
 
@@ -487,7 +499,7 @@ const META={
 
 const LOAD={
   'dashboard':  loadDashboard,
-  'al-nyheter': ()=>loadNyheter('alliance','tbl-al-nyheter'),
+  'al-nyheter': ()=>{ loadNyheter('alliance','tbl-al-nyheter'); lastKOTH(); },
   'info':       loadInfo,
   'ar-nyheter': ()=>loadNyheter('arcline','tbl-ar-nyheter'),
   'ar-klaner':  ()=>loadKlaner('arcline','tbl-ar-klaner'),
@@ -632,6 +644,8 @@ function buildForm(type,al,v){
     <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="f-tittel" value="${e(v.tittel||'')}" placeholder="Tittel..."></div>
     <div class="fg"><label class="flbl">Tag</label><input class="finp" id="f-tag" value="${e(v.tag||'')}" placeholder="📢 Nyhet"></div>
     <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
+    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://discord.gg/..."></div>
+    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Gå til Discord"></div>
     <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-04-17"></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
@@ -673,7 +687,7 @@ function gv(id){const el=document.getElementById(id);return el?el.value:'';}
 async function saveForm(){
   const type=_etype,al=_eal;
   let body={},tbl='';
-  if(type==='nyhet'){tbl='nyheter';body={tittel:gv('f-tittel'),tag:gv('f-tag'),beskrivelse:gv('f-beskrivelse'),dato:gv('f-dato'),sortering:parseInt(gv('f-sort'))||0,allianse:al};}
+  if(type==='nyhet'){tbl='nyheter';body={tittel:gv('f-tittel'),tag:gv('f-tag'),beskrivelse:gv('f-beskrivelse'),lenke:gv('f-lenke')||null,lenke_tekst:gv('f-lenke-tekst')||null,dato:gv('f-dato'),sortering:parseInt(gv('f-sort'))||0,allianse:al};}
   else if(type==='klan'){tbl='klaner';body={navn:gv('f-navn'),emoji:gv('f-emoji'),allianse:al,sortering:parseInt(gv('f-sort'))||0};}
   else if(type==='arr'){tbl='arrangementer';body={navn:gv('f-navn'),type:gv('f-type'),allianse:al,dato:gv('f-dato'),status:gv('f-status'),sortering:parseInt(gv('f-sort'))||0};}
   else if(type==='cwl'){tbl='cwl_stats';body={klan_navn:gv('f-klan'),allianse:al,liga:gv('f-liga'),sesong:gv('f-sesong'),rekord:gv('f-rekord'),medaljer:gv('f-medaljer'),plassering:gv('f-plass'),aktiv_denne_maned:gv('f-aktiv')==='true',sortering:parseInt(gv('f-sort'))||0};}
@@ -878,6 +892,44 @@ async function endrePassord() {
   } catch(e) {
     msg.style.color = 'var(--danger)';
     msg.textContent = 'Noe gikk galt';
+  }
+}
+
+
+async function lastKOTH() {
+  const data = await sbGet('info', 'order=nokkel.asc');
+  const get = (k) => { const r = data.find(x => x.nokkel === k); return r ? r.verdi : ''; };
+  const lbl = document.getElementById('koth-label-inp');
+  const tit = document.getElementById('koth-tittel-inp');
+  const bes = document.getElementById('koth-beskrivelse-inp');
+  if (lbl) lbl.value = get('koth_label');
+  if (tit) tit.value = get('koth_tittel');
+  if (bes) bes.value = get('koth_beskrivelse');
+}
+
+async function lagreKOTH() {
+  const msg = document.getElementById('koth-msg');
+  const felt = [
+    { nokkel: 'koth_label', verdi: document.getElementById('koth-label-inp').value },
+    { nokkel: 'koth_tittel', verdi: document.getElementById('koth-tittel-inp').value },
+    { nokkel: 'koth_beskrivelse', verdi: document.getElementById('koth-beskrivelse-inp').value },
+  ];
+  try {
+    const data = await sbGet('info', 'order=nokkel.asc');
+    for (const f of felt) {
+      const existing = data.find(r => r.nokkel === f.nokkel);
+      if (existing) {
+        await sbPatch('info', existing.id, { verdi: f.verdi, updated_at: new Date().toISOString() });
+      } else {
+        await sbPost('info', { nokkel: f.nokkel, verdi: f.verdi, updated_at: new Date().toISOString() });
+      }
+    }
+    msg.style.color = 'var(--success)';
+    msg.textContent = '✓ KOTH-banner lagret!';
+    setTimeout(() => msg.textContent = '', 3000);
+  } catch(e) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Feil ved lagring';
   }
 }
 
