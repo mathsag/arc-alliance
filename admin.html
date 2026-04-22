@@ -9,7 +9,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --gold: #FFD700; --gold-dark: #B8860B; --gold-dim: rgba(255,215,0,0.12);
-  --dark: #08080d; --dark2: #0d0d18; --dark3: #12121e;
+  --dark: #0f0f1e; --dark2: #151525; --dark3: #1c1c30;
   --text: #e8e0cc; --text-dim: rgba(232,224,204,0.55); --text-faint: rgba(232,224,204,0.25);
   --arcline: #CC2222; --arcline-dim: rgba(204,34,34,0.15);
   --sunbath: #4A90D9; --sunbath-dim: rgba(74,144,217,0.15);
@@ -601,7 +601,8 @@ async function loadCWL(al,tbId){
 }
 
 async function loadInfo(){
-  const data=await sbGet('info','order=nokkel.asc');
+  const allInfo=await sbGet('info','order=nokkel.asc');
+  const data=allInfo.filter(r=>!['koth_label','koth_tittel','koth_beskrivelse','koth_lenke','discord_url'].includes(r.nokkel));
   const tb=document.getElementById('tbl-info');
   if(!data.length){tb.innerHTML='<tr class="erow"><td colspan="4">Ingen nøkler</td></tr>';return;}
   tb.innerHTML=data.map(r=>`<tr>
