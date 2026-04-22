@@ -645,7 +645,8 @@ function buildForm(type,al,v){
   if(type==='nyhet')return`<div class="fgrid">
     <div class="fg"><label class="flbl">Tittel</label><input class="finp" id="f-tittel" value="${e(v.tittel||'')}" placeholder="Tittel..."></div>
     <div class="fg"><label class="flbl">Tag</label><input class="finp" id="f-tag" value="${e(v.tag||'')}" placeholder="📢 Nyhet"></div>
-    <div class="fg sp"><label class="flbl">Beskrivelse</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
+    <div class="fg sp"><label class="flbl">Ingress (vises på kortet)</label><textarea class="ftxt" id="f-ingress" style="min-height:55px;">${e(v.ingress||'')}</textarea></div>
+    <div class="fg sp"><label class="flbl">Beskrivelse (vises i modal)</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
     <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://discord.gg/..."></div>
     <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Gå til Discord"></div>
     <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-04-17"></div>
@@ -661,6 +662,9 @@ function buildForm(type,al,v){
   if(type==='arr')return`<div class="fgrid">
     <div class="fg"><label class="flbl">Navn</label><input class="finp" id="f-navn" value="${e(v.navn||'')}" placeholder="King of the Hill"></div>
     <div class="fg"><label class="flbl">Type</label><select class="fsel" id="f-type">${opts(['KOTH','CWL','Turnering','Krig','Info'],v.type)}</select></div>
+    <div class="fg sp"><label class="flbl">Beskrivelse (vises ved klikk)</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
+    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://discord.gg/..."></div>
+    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Gå til Discord"></div>
     <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-05-01"></div>
     <div class="fg"><label class="flbl">Status</label><select class="fsel" id="f-status">${opts(['Kommende','Pågår','Avsluttet'],v.status)}</select></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
@@ -689,9 +693,9 @@ function gv(id){const el=document.getElementById(id);return el?el.value:'';}
 async function saveForm(){
   const type=_etype,al=_eal;
   let body={},tbl='';
-  if(type==='nyhet'){tbl='nyheter';body={tittel:gv('f-tittel'),tag:gv('f-tag'),beskrivelse:gv('f-beskrivelse'),lenke:gv('f-lenke')||null,lenke_tekst:gv('f-lenke-tekst')||null,dato:gv('f-dato'),sortering:parseInt(gv('f-sort'))||0,allianse:al};}
+  if(type==='nyhet'){tbl='nyheter';body={tittel:gv('f-tittel'),tag:gv('f-tag'),ingress:gv('f-ingress')||null,beskrivelse:gv('f-beskrivelse'),lenke:gv('f-lenke')||null,lenke_tekst:gv('f-lenke-tekst')||null,dato:gv('f-dato'),sortering:parseInt(gv('f-sort'))||0,allianse:al};}
   else if(type==='klan'){tbl='klaner';body={navn:gv('f-navn'),emoji:gv('f-emoji'),allianse:al,sortering:parseInt(gv('f-sort'))||0};}
-  else if(type==='arr'){tbl='arrangementer';body={navn:gv('f-navn'),type:gv('f-type'),allianse:al,dato:gv('f-dato'),status:gv('f-status'),sortering:parseInt(gv('f-sort'))||0};}
+  else if(type==='arr'){tbl='arrangementer';body={navn:gv('f-navn'),type:gv('f-type'),allianse:al,beskrivelse:gv('f-beskrivelse')||null,lenke:gv('f-lenke')||null,lenke_tekst:gv('f-lenke-tekst')||null,dato:gv('f-dato'),status:gv('f-status'),sortering:parseInt(gv('f-sort'))||0};}
   else if(type==='cwl'){tbl='cwl_stats';body={klan_navn:gv('f-klan'),allianse:al,liga:gv('f-liga'),sesong:gv('f-sesong'),rekord:gv('f-rekord'),medaljer:gv('f-medaljer'),plassering:gv('f-plass'),aktiv_denne_maned:gv('f-aktiv')==='true',sortering:parseInt(gv('f-sort'))||0};}
   else if(type==='info'){tbl='info';body={nokkel:gv('f-nokkel'),verdi:gv('f-verdi'),updated_at:new Date().toISOString()};}
 
@@ -733,17 +737,31 @@ function updatePreview() {
   if (type === 'nyhet') {
     const tittel = document.getElementById('f-tittel')?.value || 'Tittel...';
     const tag = document.getElementById('f-tag')?.value || '📢 Nyhet';
+    const ingress = document.getElementById('f-ingress')?.value || '';
     const beskrivelse = document.getElementById('f-beskrivelse')?.value || 'Beskrivelse...';
+    const lenke = document.getElementById('f-lenke')?.value || '';
+    const lenkeTekst = document.getElementById('f-lenke-tekst')?.value || 'Les mer →';
     const dato = document.getElementById('f-dato')?.value || '';
     const datoFmt = dato ? new Date(dato).toLocaleDateString('nb-NO', {day:'numeric',month:'long',year:'numeric'}) : '';
     const farge = al === 'arcline' ? 'blue' : al === 'sunbath' ? 'red' : '#FFD700';
     const border = al === 'arcline' ? 'rgba(204,34,34,0.3)' : al === 'sunbath' ? 'rgba(74,144,217,0.3)' : 'rgba(255,215,0,0.2)';
-    el.innerHTML = `<div style="background:var(--dark2);border:1px solid ${border};padding:1.2rem;border-radius:2px;">
-      <div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">${tag}</div>
-      <div style="font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--text);margin-bottom:0.6rem;">${tittel}</div>
-      <div style="font-size:0.88rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.8rem;">${beskrivelse}</div>
-      ${datoFmt ? `<div style="font-size:0.75rem;color:var(--text-faint);font-family:Cinzel,serif;">${datoFmt}</div>` : ''}
-    </div>`;
+    el.innerHTML = `
+      <div style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">👁 KORT</div>
+      <div style="background:var(--dark2);border:1px solid ${border};padding:1.2rem;border-radius:2px;margin-bottom:1rem;">
+        <div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">${tag}</div>
+        <div style="font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--text);margin-bottom:0.6rem;">${tittel}</div>
+        <div style="font-size:0.88rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.8rem;">${ingress || beskrivelse}</div>
+        ${datoFmt ? `<div style="font-size:0.75rem;color:var(--text-faint);font-family:Cinzel,serif;">${datoFmt}</div>` : ''}
+        ${lenke ? `<div style="margin-top:0.8rem;"><span style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.3rem 0.8rem;">Les mer →</span></div>` : ''}
+      </div>
+      <div style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">👁 MODAL</div>
+      <div style="background:var(--dark2);border:1px solid ${border};padding:1.2rem;border-radius:2px;">
+        <div style="font-family:Cinzel,serif;font-size:0.65rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.5rem;">${tag}</div>
+        <div style="font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--text);margin-bottom:0.6rem;">${tittel}</div>
+        <div style="font-size:0.88rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.8rem;">${beskrivelse}</div>
+        ${datoFmt ? `<div style="font-size:0.75rem;color:var(--text-faint);font-family:Cinzel,serif;margin-bottom:0.8rem;">${datoFmt}</div>` : ''}
+        ${lenke ? `<div><span style="font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:2px;color:var(--gold);border:1px solid rgba(255,215,0,0.3);padding:0.3rem 0.8rem;">${lenkeTekst}</span></div>` : ''}
+      </div>`;
 
   } else if (type === 'klan') {
     const navn = document.getElementById('f-navn')?.value || 'Klan-navn';
