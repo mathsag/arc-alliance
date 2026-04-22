@@ -143,7 +143,7 @@ tbody tr:last-child td { border-bottom:none; }
 .fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
 .fg { display:flex; flex-direction:column; gap:0.32rem; }
 .fg.sp { grid-column:1/-1; }
-.flbl { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-faint); }
+.flbl { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:2px; text-transform:uppercase; color:rgba(232,224,204,0.65); }
 .finp,.fsel,.ftxt { background:var(--dark); border:1px solid rgba(255,215,0,0.13); color:var(--text); font-family:'Crimson Pro',serif; font-size:0.9rem; padding:0.5rem 0.7rem; outline:none; transition:border-color 0.2s; width:100%; }
 .finp:focus,.fsel:focus,.ftxt:focus { border-color:rgba(255,215,0,0.4); }
 .fsel option { background:var(--dark2); }
@@ -298,7 +298,7 @@ tbody tr:last-child td { border-bottom:none; }
     <div class="nav-item a" id="nav-ar-klaner" onclick="goMob('ar-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
     <div class="nav-item a" id="nav-ar-arr" onclick="goMob('ar-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
     <div class="nav-item a" id="nav-ar-cwl" onclick="goMob('ar-cwl')"><span class="nav-icon">📊</span> CWL-statistikk</div>
-    <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot sb"></div><span class="nav-lbl sb">Arctic Sunbath</span></div>
+    <div class="nav-section" style="margin-top:0.3rem;"><div class="nav-dot sb"></div><span class="nav-lbl sb">Arctic</span></div>
     <div class="nav-item s" id="nav-sb-nyheter" onclick="goMob('sb-nyheter')"><span class="nav-icon">📰</span> Nyheter</div>
     <div class="nav-item s" id="nav-sb-klaner" onclick="goMob('sb-klaner')"><span class="nav-icon">🏰</span> Klaner</div>
     <div class="nav-item s" id="nav-sb-arr" onclick="goMob('sb-arr')"><span class="nav-icon">📅</span> Arrangementer</div>
@@ -406,25 +406,25 @@ tbody tr:last-child td { border-bottom:none; }
 
       <!-- SUNBATH NYHETER -->
       <div class="panel" id="panel-sb-nyheter">
-        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Nyheter</div><button class="btn btn-sb" onclick="openModal('nyhet','sunbath')">+ Ny nyhet</button></div>
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic · Nyheter</div><button class="btn btn-sb" onclick="openModal('nyhet','sunbath')">+ Ny nyhet</button></div>
         <div class="twrap"><table><thead><tr><th style="width:30px;"></th><th>Tittel</th><th>Tag</th><th>Dato</th><th></th></tr></thead><tbody id="tbl-sb-nyheter"><tr class="erow"><td colspan="5">Laster...</td></tr></tbody></table></div>
       </div>
 
       <!-- SUNBATH KLANER -->
       <div class="panel" id="panel-sb-klaner">
-        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Klaner</div><button class="btn btn-sb" onclick="openModal('klan','sunbath')">+ Ny klan</button></div>
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic · Klaner</div><button class="btn btn-sb" onclick="openModal('klan','sunbath')">+ Ny klan</button></div>
         <div class="twrap"><table><thead><tr><th style="width:30px;"></th><th>Emoji</th><th>Navn</th><th></th></tr></thead><tbody id="tbl-sb-klaner"><tr class="erow"><td colspan="4">Laster...</td></tr></tbody></table></div>
       </div>
 
       <!-- SUNBATH ARR -->
       <div class="panel" id="panel-sb-arr">
-        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · Arrangementer</div><button class="btn btn-sb" onclick="openModal('arr','sunbath')">+ Nytt</button></div>
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic · Arrangementer</div><button class="btn btn-sb" onclick="openModal('arr','sunbath')">+ Nytt</button></div>
         <div class="twrap"><table><thead><tr><th style="width:30px;"></th><th>Navn</th><th>Type</th><th>Dato</th><th>Status</th><th></th></tr></thead><tbody id="tbl-sb-arr"><tr class="erow"><td colspan="6">Laster...</td></tr></tbody></table></div>
       </div>
 
       <!-- SUNBATH CWL -->
       <div class="panel" id="panel-sb-cwl">
-        <div class="sec-head"><div class="sec-title sb">🔵 Arctic Sunbath · CWL-statistikk</div><button class="btn btn-sb" onclick="openModal('cwl','sunbath')">+ Legg til</button></div>
+        <div class="sec-head"><div class="sec-title sb">🔵 Arctic · CWL-statistikk</div><button class="btn btn-sb" onclick="openModal('cwl','sunbath')">+ Legg til</button></div>
         <p class="note">Fallback-stats på kortene. CWL-modalen henter live data fra API.</p>
         <div class="twrap"><table><thead><tr><th style="width:30px;"></th><th>Klan</th><th>Liga</th><th>Sesong</th><th>Rekord</th><th>Medaljer</th><th>Plassering</th><th>Aktiv</th><th></th></tr></thead><tbody id="tbl-sb-cwl"><tr class="erow"><td colspan="9">Laster...</td></tr></tbody></table></div>
       </div>
@@ -497,10 +497,10 @@ const META={
   'ar-klaner':   {t:'Arcline · Klaner',s:'Klaner under Arcline',bar:'arcline'},
   'ar-arr':      {t:'Arcline · Arrangementer',s:'Events og kamper',bar:'arcline'},
   'ar-cwl':      {t:'Arcline · CWL-statistikk',s:'Månedlig CWL-data',bar:'arcline'},
-  'sb-nyheter':  {t:'Arctic Sunbath · Nyheter',s:'Klan-spesifikke nyheter',bar:'sunbath'},
-  'sb-klaner':   {t:'Arctic Sunbath · Klaner',s:'Klaner under Arctic Sunbath',bar:'sunbath'},
-  'sb-arr':      {t:'Arctic Sunbath · Arrangementer',s:'Events og kamper',bar:'sunbath'},
-  'sb-cwl':      {t:'Arctic Sunbath · CWL-statistikk',s:'Månedlig CWL-data',bar:'sunbath'},
+  'sb-nyheter':  {t:'Arctic · Nyheter',s:'Klan-spesifikke nyheter',bar:'sunbath'},
+  'sb-klaner':   {t:'Arctic · Klaner',s:'Klaner under Arctic',bar:'sunbath'},
+  'sb-arr':      {t:'Arctic · Arrangementer',s:'Events og kamper',bar:'sunbath'},
+  'sb-cwl':      {t:'Arctic · CWL-statistikk',s:'Månedlig CWL-data',bar:'sunbath'},
 };
 
 const LOAD={
@@ -665,8 +665,8 @@ function buildForm(type,al,v){
     <div class="fg"><label class="flbl">Tag</label><input class="finp" id="f-tag" value="${e(v.tag||'')}" placeholder="📢 Nyhet"></div>
     <div class="fg sp"><label class="flbl">Ingress (vises på kortet)</label><textarea class="ftxt" id="f-ingress" style="min-height:55px;">${e(v.ingress||'')}</textarea></div>
     <div class="fg sp"><label class="flbl">Beskrivelse (vises i modal)</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
-    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://discord.gg/..."></div>
-    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Gå til Discord"></div>
+    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://..."></div>
+    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Les mer →"></div>
     <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-04-17"></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
@@ -681,15 +681,15 @@ function buildForm(type,al,v){
     <div class="fg"><label class="flbl">Navn</label><input class="finp" id="f-navn" value="${e(v.navn||'')}" placeholder="King of the Hill"></div>
     <div class="fg"><label class="flbl">Type</label><select class="fsel" id="f-type">${opts(['KOTH','CWL','Turnering','Krig','Info'],v.type)}</select></div>
     <div class="fg sp"><label class="flbl">Beskrivelse (vises ved klikk)</label><textarea class="ftxt" id="f-beskrivelse">${e(v.beskrivelse||'')}</textarea></div>
-    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://discord.gg/..."></div>
-    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Gå til Discord"></div>
+    <div class="fg"><label class="flbl">Lenke (valgfri)</label><input class="finp" id="f-lenke" value="${e(v.lenke||'')}" placeholder="https://..."></div>
+    <div class="fg"><label class="flbl">Lenke-tekst</label><input class="finp" id="f-lenke-tekst" value="${e(v.lenke_tekst||'')}" placeholder="Les mer →"></div>
     <div class="fg"><label class="flbl">Dato (YYYY-MM-DD)</label><input class="finp" id="f-dato" value="${e(v.dato||'')}" placeholder="2026-05-01"></div>
     <div class="fg"><label class="flbl">Status</label><select class="fsel" id="f-status">${opts(['Kommende','Pågår','Avsluttet'],v.status)}</select></div>
     <div class="fg"><label class="flbl">Sortering</label><input class="finp" id="f-sort" type="number" value="${v.sortering??0}"></div>
   </div>${acts}`;
 
   if(type==='cwl')return`<div class="fgrid">
-    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-klan" value="${e(v.klan_navn||'')}" placeholder="Arctic Sunbath"></div>
+    <div class="fg"><label class="flbl">Klan-navn</label><input class="finp" id="f-klan" value="${e(v.klan_navn||'')}" placeholder="Arctic"></div>
     <div class="fg"><label class="flbl">Liga</label><input class="finp" id="f-liga" value="${e(v.liga||'')}" placeholder="Stormester I"></div>
     <div class="fg"><label class="flbl">Sesong (YYYY-MM)</label><input class="finp" id="f-sesong" value="${e(v.sesong||'2026-04')}" placeholder="2026-04"></div>
     <div class="fg"><label class="flbl">Rekord</label><input class="finp" id="f-rekord" value="${e(v.rekord||'')}" placeholder="5W - 2T"></div>
