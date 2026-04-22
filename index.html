@@ -1739,8 +1739,7 @@ async function loadArrangementerFraSupabase() {
         var color = e.status === 'Avsluttet' ? 'rgba(200,200,200,0.4)' : '#FFD700';
         var besk = e.beskrivelse || '';
         var harInfo = besk || e.lenke;
-        var rowData = { navn: e.navn||'', type: e.type||'', dato: dato, status: e.status||'', farge: color, besk: besk, lenke: e.lenke||null, lenkeTekst: e.lenke_tekst||null };
-        return '<tr style="cursor:' + (harInfo?'pointer':'default') + '" ' + (harInfo ? 'data-arr='' + encodeURIComponent(JSON.stringify(rowData)) + '' onclick="var d=JSON.parse(decodeURIComponent(this.dataset.arr));openArrModal(d.navn,d.type,d.dato,d.status,d.farge,d.besk,d.lenke,d.lenkeTekst)"' : '') + '><td>' + (e.navn||'') + (harInfo ? ' <span style="font-family:Cinzel,serif;font-size:0.55rem;color:rgba(255,215,0,0.5);letter-spacing:1px;">↗</span>' : '') + '</td><td>' + type + '</td><td>' + dato + '</td><td style="color:' + color + '">' + (e.status || '') + '</td></tr>';
+        return '<tr style="cursor:' + (harInfo?'pointer':'default') + '" ' + (harInfo ? 'onclick="openArrModal(' + JSON.stringify(e.navn||'') + ',' + JSON.stringify(e.type||'') + ',' + JSON.stringify(dato) + ',' + JSON.stringify(e.status||'') + ',' + JSON.stringify(color) + ',' + JSON.stringify(besk) + ',' + JSON.stringify(e.lenke||null) + ',' + JSON.stringify(e.lenke_tekst||null) + ')"' : '') + '><td>' + (e.navn||'') + (harInfo ? ' <span style="font-family:Cinzel,serif;font-size:0.55rem;color:rgba(255,215,0,0.5);letter-spacing:1px;">↗</span>' : '') + '</td><td>' + type + '</td><td>' + dato + '</td><td style="color:' + color + '">' + (e.status || '') + '</td></tr>';
       }).join('');
     }
 
