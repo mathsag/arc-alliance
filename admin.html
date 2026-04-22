@@ -445,18 +445,21 @@ tbody tr:last-child td { border-bottom:none; }
 <script>
 const SB='https://xgkxarqkngoilpsxhqeg.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhna3hhcnFrbmdvaWxwc3hocWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDk3MDUsImV4cCI6MjA5MTcyNTcwNX0.yiadkka800T3ffxiDiRKGyEVTU0T8NZTLdi2LDSk7DY';
-const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+function getH() {
+  const token = sessionStorage.getItem('arc_token') || KEY;
+  return {'apikey':KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=representation'};
+}
 
 let _eid=null,_etype=null,_eal=null;
 let _pvOpen=false;
 
 async function sbGet(tbl,q=''){
-  try{const r=await fetch(SB+'/rest/v1/'+tbl+'?'+q,{headers:H});if(!r.ok)return[];return r.json();}
+  try{const r=await fetch(SB+'/rest/v1/'+tbl+'?'+q,{headers:getH()});if(!r.ok)return[];return r.json();}
   catch(e){return[];}
 }
-async function sbPost(tbl,b){const r=await fetch(SB+'/rest/v1/'+tbl,{method:'POST',headers:H,body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
-async function sbPatch(tbl,id,b){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'PATCH',headers:H,body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
-async function sbDel(tbl,id){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'DELETE',headers:H});if(!r.ok)throw new Error('Delete failed');}
+async function sbPost(tbl,b){const r=await fetch(SB+'/rest/v1/'+tbl,{method:'POST',headers:getH(),body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
+async function sbPatch(tbl,id,b){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'PATCH',headers:getH(),body:JSON.stringify(b)});if(!r.ok){const t=await r.text();throw new Error(t);}return r.json();}
+async function sbDel(tbl,id){const r=await fetch(SB+'/rest/v1/'+tbl+'?id=eq.'+id,{method:'DELETE',headers:getH()});if(!r.ok)throw new Error('Delete failed');}
 
 function toast(msg,err=false){const el=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;el.className='toast show'+(err?' err':'');setTimeout(()=>el.className='toast',3000);}
 
