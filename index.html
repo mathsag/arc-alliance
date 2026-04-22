@@ -1415,6 +1415,13 @@ function closeNyhetModal(e) {
 </div>
 <style>
 @keyframes modalIn { from{opacity:0;transform:translateY(12px) scale(0.97);}to{opacity:1;transform:none;} }
+@media (max-width: 768px) {
+  #nyhetModal > div {
+    max-width: calc(100vw - 1rem) !important;
+    max-height: 90vh !important;
+    margin: 0.5rem !important;
+  }
+}
 </style>
 
 </body> -->
@@ -1588,6 +1595,69 @@ async function loadInfoFraSupabase() {
 }
 
 
+
+async function oppdaterCWLKortFraAPI() {
+  try {
+    // Hent sesong fra info-tabellen
+    const infoRes = await fetch(SUPABASE_URL + '/rest/v1/info?nokkel=eq.cwl_sesong', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const infoData = await infoRes.json();
+    const sesong = infoData && infoData[0] ? infoData[0].verdi : CURRENT_SEASON;
+
+    // Hent aktive klaner fra Supabase
+    const cwlRes = await fetch(SUPABASE_URL + '/rest/v1/cwl_stats?aktiv_denne_maned=eq.true', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const aktiveKlaner = await cwlRes.json();
+
+    for (var i = 0; i < aktiveKlaner.length; i++) {
+      var klan = aktiveKlaner[i];
+      var tag = CLAN_TAGS[klan.klan_navn];
+      if (!tag) continue;
+
+      try {
+        var apiRes = await fetch('https://api.clashk.ing/cwl/' + tag + '/' + sesong);
+        if (!apiRes.ok) continue;
+        var data = await apiRes.json();
+
+        var cleanTag = decodeURIComponent(tag).replace('#', '');
+        var me = data.clan_rankings ? data.clan_rankings.find(function(c) {
+          return c.tag.replace('#', '') === cleanTag;
+        }) : null;
+        if (!me) continue;
+
+        // Finn kortet på siden og oppdater
+        var rekord = me.rounds ? (me.rounds.won + 'W - ' + me.rounds.lost + 'T') : null;
+        var stjerner = me.stars != null ? me.stars : null;
+        var plassering = data.clan_rankings ? ('#' + (data.clan_rankings.findIndex(function(c) {
+          return c.tag.replace('#', '') === cleanTag;
+        }) + 1) + ' av ' + data.clan_rankings.length) : null;
+        var medaljer = me.bonus_attack_wins != null ? me.bonus_attack_wins : null;
+
+        // Oppdater alle stat-kort med dette klannavnet
+        document.querySelectorAll('.stat-card').forEach(function(kort) {
+          var navnEl = kort.querySelector('.stat-card-name');
+          if (!navnEl || navnEl.textContent.trim() !== klan.klan_navn) return;
+          var rader = kort.querySelectorAll('.stat-row');
+          rader.forEach(function(rad) {
+            var label = rad.querySelector('.stat-label');
+            var val = rad.querySelector('.stat-value');
+            if (!label || !val) return;
+            if (label.textContent === 'Sesongrekord' && rekord) val.textContent = rekord;
+            if (label.textContent === 'Plassering' && plassering) val.textContent = plassering;
+            if (label.textContent === 'Medaljer' && stjerner) val.textContent = '🏅 ' + stjerner;
+          });
+        });
+      } catch(e) {
+        console.log('API feil for ' + klan.klan_navn + ':', e);
+      }
+    }
+  } catch(e) {
+    console.log('CWL live oppdatering feil:', e);
+  }
+}
+
 async function loadArrangementerFraSupabase() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/arrangementer?order=sortering.asc', {
@@ -1739,6 +1809,7 @@ document.addEventListener('DOMContentLoaded', loadKlanerFraSupabase);
 document.addEventListener('DOMContentLoaded', loadKlanNyheter);
 document.addEventListener('DOMContentLoaded', loadInfoFraSupabase);
 document.addEventListener('DOMContentLoaded', loadArrangementerFraSupabase);
+document.addEventListener('DOMContentLoaded', oppdaterCWLKortFraAPI);
 document.addEventListener('DOMContentLoaded', loadCWLStatsFraSupabase);
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -1861,6 +1932,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <style>
 @keyframes modalIn { from{opacity:0;transform:translateY(12px) scale(0.97);}to{opacity:1;transform:none;} }
+@media (max-width: 768px) {
+  #nyhetModal > div {
+    max-width: calc(100vw - 1rem) !important;
+    max-height: 90vh !important;
+    margin: 0.5rem !important;
+  }
+}
 </style>
 
 </body>
