@@ -612,7 +612,7 @@ footer {
       <img src="arcline_red_transparent.png" alt="Arcline" class="clan-logo">
       <h1 class="clan-title clan-title-blue">Arcline</h1>
       <p class="clan-sub">Alliance · 11 Klaner</p>
-      <p class="clan-clans">ACM · HW Esports · Hierarchy of W · Robust Norge · Arcline · PAAK ARMY · HOLLOW · HW Alliance · Severance · HW Community · Arcline Mini</p>
+      <p class="clan-clans" id="arcline-clan-list">Laster...</p>
       <a href="#arcline" class="btn-clan btn-blue">Utforsk Arcline</a>
     </div>
   </div>
@@ -624,7 +624,7 @@ footer {
       <img src="Arcline_blue_transparent.png" alt="Arctic" class="clan-logo">
       <h1 class="clan-title clan-title-red">Arctic</h1>
       <p class="clan-sub">Alliance · 5 Klaner</p>
-      <p class="clan-clans">Arctic · Arctic CWL · Sunbath CWL · Arctic Solstice · Solstice CWL</p>
+      <p class="clan-clans" id="arctic-clan-list">Laster...</p>
       <a href="#sunbath" class="btn-clan btn-red">Utforsk Sunbath</a>
     </div>
   </div>
@@ -1845,6 +1845,22 @@ async function loadCWLStatsFraSupabase() {
   } catch(e) { console.log('CWL stats error:', e); }
 }
 
+
+async function loadClanLists() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/klaner?order=sortering.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const data = await res.json();
+    const arcline = data.filter(k => k.allianse === 'arcline').map(k => k.navn).join(' · ');
+    const arctic = data.filter(k => k.allianse === 'sunbath').map(k => k.navn).join(' · ');
+    const arclineEl = document.getElementById('arcline-clan-list');
+    const arcticEl = document.getElementById('arctic-clan-list');
+    if (arclineEl) arclineEl.textContent = arcline;
+    if (arcticEl) arcticEl.textContent = arctic;
+  } catch(e) { console.log('ClanList error:', e); }
+}
+
 async function loadSupabaseNews() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/nyheter?allianse=eq.alliance&order=dato.desc&limit=6', {
@@ -1877,6 +1893,7 @@ async function loadSupabaseNews() {
 
 <script>
 document.addEventListener('DOMContentLoaded', loadSupabaseNews);
+document.addEventListener('DOMContentLoaded', loadClanLists);
 document.addEventListener('DOMContentLoaded', loadKlanerFraSupabase);
 document.addEventListener('DOMContentLoaded', loadKlanNyheter);
 document.addEventListener('DOMContentLoaded', loadInfoFraSupabase);
